@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Listy Wozów — czarno‑biały</title>
+<title>Listy Wozów — czarno-biały</title>
 <meta name="description" content="Listy Wozów, skrytki i sprzęt. Supabase Auth + dane." />
 <style>
   :root{ --bg:#fff; --fg:#000; --muted:#444; --line:#000; --gap:16px; --radius:8px; --red:#c00; --green:#0a0; --comp-width:420px; }
@@ -11,7 +11,6 @@
   body{ margin:0; background:#fff; color:#000; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
   a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
 
-  /* Szerzej na mobile: mniej nieużytych marginesów */
   .wrap{ width:min(1080px,96vw); margin-inline:auto; }
 
   header{ border-bottom:1px solid var(--line); background:#fff; position:sticky; top:0; z-index:10; }
@@ -29,12 +28,12 @@
 
   section{ padding:48px 0; } h1,h2,h3{ line-height:1.2; margin:0 0 .5rem; }
   .sub{ color:var(--muted); margin:.25rem 0 1rem; }
-  .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
+  .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; position:relative; }
 
   .btn{
     appearance:none; background:#fff; color:#000; border:1px solid var(--line);
     padding:10px 12px; border-radius:6px; cursor:pointer;
-    box-shadow:0 2px 0 #000; font-weight:700; min-height:44px; /* wygodny klik kciukiem */
+    box-shadow:0 2px 0 #000; font-weight:700; min-height:44px;
     touch-action: manipulation;
   }
   .btn:hover{ background:#f6f6f6; }
@@ -58,25 +57,31 @@
   /* Fleet */
   .fleet-top{ display:flex; justify-content:center; }
   .fleet-buttons{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
-
-  /* Przyciski wozów — 2 kolumny na małych, pełna szerokość na bardzo małych */
-  @media (max-width:640px){
-    .fleet-buttons .btn{ flex: 1 1 calc(50% - 8px); }
-  }
-  @media (max-width:420px){
-    .fleet-buttons .btn{ flex: 1 1 100%; }
-  }
+  @media (max-width:640px){ .fleet-buttons .btn{ flex: 1 1 calc(50% - 8px); } }
+  @media (max-width:420px){ .fleet-buttons .btn{ flex: 1 1 100%; } }
 
   .actions-wrap{ display:none; justify-content:center; margin-top:12px; }
   .actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
 
-  /* Skrytki: stała, ale elastyczna szerokość karty */
-  .compartments-wrap{ display:flex; justify-content:center; margin-top:16px; }
-  .compartments{ display:flex; flex-direction:column; gap:8px; width:clamp(320px, 92vw, var(--comp-width)); max-width:100%; }
+  /* LISTA SKRYTEK — ZAWSZE WYŚRODKOWANA POD PRZYCISKAMI WOZÓW I AKCJĄ */
+  .compartments-wrap{
+    display:flex;
+    justify-content:center;
+    margin-top:16px;
+  }
+  .compartments{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:clamp(320px, 92vw, var(--comp-width));
+    max-width:100%;
+  }
   .compartment-item{ width:100%; }
   .btn.compartment-btn{ width:100%; text-align:center; }
 
-  .equip-slot{ margin-top:8px; }
+  /* kontener sprzętu tuż po przycisku skrytki */
+  .equip-slot{ display:block; width:100%; margin-top:8px; }
+
   .equip-row{
     display:grid; grid-template-columns:1fr auto; gap:10px;
     padding:10px 12px; border:1px solid var(--line); border-radius:6px; cursor:pointer;
@@ -84,7 +89,6 @@
   .equip-row + .equip-row{ margin-top:8px; }
   .equip-name{ font-weight:700; }
   .qty-badge{ border:1px solid var(--line); border-radius:999px; padding:4px 10px; }
-
   .equip-row.selected{ color:var(--red); border-color:var(--red); }
   .equip-row.selected .qty-badge{ border-color:var(--red); }
 
@@ -102,7 +106,7 @@
   .today-card h3{ margin:0 0 6px; font-size:1.1rem; }
   .today-card .tasks{ white-space:pre-wrap; }
 
-  /* BRAKI: tabela desktop + wersja mobilna „kartki” (bez przewijania w poziomie) */
+  /* BRAKI + Sprzęt JRG — tabele responsywne */
   #shortagesTable, #equipResultsTable{
     width: 100%;
     border-collapse: collapse;
@@ -126,40 +130,19 @@
   #equipResultsTable tbody tr:nth-child(even){
     background-color: #f9f9f9;
   }
-
-  /* ——— Wersja kartkowa na telefonach ——— */
   @media (max-width: 560px){
-    /* chowamy thead, każdy wiersz staje się „kartką” */
     #shortagesTable thead, #equipResultsTable thead{ display:none; }
     #shortagesTable, #equipResultsTable{ border:0; }
     #shortagesTable tbody tr, #equipResultsTable tbody tr{
-      display:block;
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:8px;
-      margin-bottom:10px;
-      background:#fff;
+      display:block; border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:10px; background:#fff;
     }
-    #shortagesTable tbody tr:nth-child(even),
-    #equipResultsTable tbody tr:nth-child(even){
-      background:#fff; /* kartki jednolite; obramowanie widać zawsze */
-    }
+    #shortagesTable tbody tr:nth-child(even), #equipResultsTable tbody tr:nth-child(even){ background:#fff; }
     #shortagesTable td, #equipResultsTable td{
-      display:grid;
-      grid-template-columns: 44% 56%;
-      gap:6px 10px;
-      border:0;
-      padding:6px 0;
-      text-align:left;      /* w kartkach tekst w lewo */
-      white-space:normal;   /* pozwól łamać linie */
+      display:grid; grid-template-columns: 44% 56%; gap:6px 10px; border:0; padding:6px 0; text-align:left; white-space:normal;
     }
-    #shortagesTable td::before, #equipResultsTable td::before{
-      content: attr(data-label);
-      font-weight:700;
-    }
+    #shortagesTable td::before, #equipResultsTable td::before{ content: attr(data-label); font-weight:700; }
   }
 
-  /* Dostępność i preferencje */
   :focus-visible{ outline: 3px solid #000; outline-offset: 2px; }
   @media (hover:none){ .nav a:hover, .btn:hover{ background:#fff; } }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
@@ -262,7 +245,7 @@
   <!-- FLEET -->
   <section id="fleet" class="hidden">
     <div class="wrap">
-      <div class="card">
+      <div class="card" id="fleetCard">
         <div class="fleet-top">
           <div id="fleetButtons" class="fleet-buttons">
             <button class="btn" data-vehicle="411-22">411-22</button>
@@ -286,8 +269,9 @@
           </div>
         </div>
 
-        <div class="compartments-wrap">
-          <div id="compartments" class="compartments" style="display:none"></div>
+        <!-- LISTA SKRYTEK — ZAWSZE WYŚRODKOWANA PONIŻEJ -->
+        <div class="compartments-wrap" id="compWrap" style="display:none">
+          <div id="compartments" class="compartments"></div>
         </div>
       </div>
     </div>
@@ -454,7 +438,6 @@
 
   const sections = [sectionHome, sectionAuth, sectionFleet, sectionEquip, sectionKnowledge, sectionShort];
 
-  // --- ZAPAMIĘTYWANIE OSTATNIEJ SEKCJI
   let lastSectionId = localStorage.getItem('lastSectionId') || '#home';
   function showOnly(section){
     sections.forEach(s => s.classList.add('hidden'));
@@ -464,14 +447,12 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ===== Uprawnienia do ekranu Braki =====
   async function isViewer(userId){
     if (!userId) return false;
     const { data } = await supabase.from('shortages_viewers').select('user_id').eq('user_id', userId).maybeSingle();
     return !!data;
   }
 
-  // ===== Auth UI =====
   async function refreshAuthUI(session){
     try{
       if (session?.user){
@@ -568,6 +549,7 @@
 
   // ===== FLEET =====
   const fleetButtons = $('#fleetButtons');
+  const compartmentsOuter = document.getElementById('compWrap'); // TERAZ w normalnym przepływie pod akcjami
   const compartmentsBox = $('#compartments');
   const actionsWrap = $('#actionsWrap');
   const expandAllBtn = $('#expandAllBtn');
@@ -588,73 +570,159 @@
     const { data, error } = await supabase.from(table).select('id, "SPRZĘT", "ILOŚĆ", compartment').eq('compartment',compartment).order('id',{ascending:true});
     if (error) throw error; return data||[];
   }
-  function showLoadingCompartments(){ compartmentsBox.style.display=''; compartmentsBox.innerHTML=''; for(let i=0;i<5;i++){ const s=document.createElement('div'); s.className='skeleton'; s.style.height='42px'; s.style.border='1px solid #000'; s.style.borderRadius='6px'; s.style.marginTop=i?'8px':'0'; compartmentsBox.appendChild(s);} }
+
+  function showLoadingCompartments(){
+    compartmentsOuter.style.display=''; // pokaż kontener na środku pod akcjami
+    compartmentsBox.style.display='';
+    compartmentsBox.innerHTML='';
+    for(let i=0;i<5;i++){
+      const s=document.createElement('div');
+      s.className='skeleton'; s.style.height='42px'; s.style.border='1px solid #000';
+      s.style.borderRadius='6px'; s.style.marginTop=i?'8px':'0';
+      compartmentsBox.appendChild(s);
+    }
+  }
+
   function renderCompartments(list){
     compartmentsBox.innerHTML=''; compartmentsBox.style.display='';
-    if(!list.length){ const empty=document.createElement('div'); empty.className='sub'; empty.textContent='Brak skrytek.'; compartmentsBox.appendChild(empty); return; }
+    if(!list.length){ compartmentsBox.innerHTML='<div class="sub">Brak skrytek.</div>'; return; }
     list.forEach(({name})=>{
       const wrap=document.createElement('div'); wrap.className='compartment-item';
-      const btn=document.createElement('button'); btn.className='btn compartment-btn'; btn.textContent=name; btn.setAttribute('data-compartment',name);
-      const slot=document.createElement('div'); slot.className='equip-slot'; slot.setAttribute('data-equip-slot',name); slot.dataset.open='false';
-      wrap.append(btn,slot); compartmentsBox.appendChild(wrap);
+
+      const btn=document.createElement('button');
+      btn.className='btn compartment-btn';
+      btn.textContent=name;
+      btn.setAttribute('data-compartment',name);
+
+      const slot=document.createElement('div');
+      slot.className='equip-slot';
+      slot.setAttribute('data-equip-slot',name);
+      slot.dataset.open='false';
+
+      wrap.append(btn,slot);
+      compartmentsBox.appendChild(wrap);
     });
     expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex';
   }
-  function showLoadingEquipInSlot(slot){ slot.innerHTML=''; for(let i=0;i<4;i++){ const r=document.createElement('div'); r.className='skeleton'; r.style.height='44px'; r.style.marginTop='8px'; slot.appendChild(r); } }
+
+  function showLoadingEquipInSlot(slot){
+    slot.innerHTML='';
+    for(let i=0;i<4;i++){
+      const r=document.createElement('div');
+      r.className='skeleton';
+      r.style.height='44px';
+      r.style.marginTop='8px';
+      slot.appendChild(r);
+    }
+  }
+
   function renderEquipInSlot(slot, rows, table, compartment){
-    slot.innerHTML=''; if(!rows.length){ slot.innerHTML='<div class="sub">Brak sprzętu w tej skrytce.</div>'; return; }
-    rows.forEach(r=>{ const row=document.createElement('div'); row.className='equip-row'; row.dataset.id=String(r.id); row.dataset.compartment=compartment;
+    slot.innerHTML='';
+    if(!rows.length){ slot.innerHTML='<div class="sub">Brak sprzętu w tej skrytce.</div>'; return; }
+    rows.forEach(r=>{
+      const row=document.createElement('div');
+      row.className='equip-row';
+      row.dataset.id=String(r.id);
+      row.dataset.compartment=compartment;
       if(selectedSet.has(keyFor(table,compartment,r.id))) row.classList.add('selected');
       row.innerHTML=`<div class="equip-name">${r['SPRZĘT']}</div><div class="qty-badge">${r['ILOŚĆ']}</div>`;
       slot.appendChild(row);
     });
   }
+
   async function openCompartment(btn){
-    const slot=btn.nextElementSibling; if(!slot) return;
-    $$('#compartments .compartment-btn').forEach(b=>{ if(b!==btn) b.classList.remove('primary'); });
-    $$('#compartments .equip-slot').forEach(s=>{ if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; } });
-    if (slot.dataset.open==='true'){ slot.dataset.open='false'; slot.innerHTML=''; btn.classList.remove('primary'); return; }
+    const slot = btn.nextElementSibling;
+    if(!slot || !slot.classList.contains('equip-slot')) return;
+
+    // Akordeon: zamknij inne
+    $$('#compartments .equip-slot').forEach(s=>{
+      if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; }
+    });
+    $$('#compartments .compartment-btn').forEach(b=>{
+      if(b!==btn) b.classList.remove('primary');
+    });
+
+    if (slot.dataset.open === 'true'){
+      slot.dataset.open='false';
+      slot.innerHTML='';
+      btn.classList.remove('primary');
+      return;
+    }
+
+    btn.classList.add('primary');
+    slot.dataset.open='true';
+    showLoadingEquipInSlot(slot);
     const tableAtClick = currentTable;
-    btn.classList.add('primary'); slot.dataset.open='true'; showLoadingEquipInSlot(slot);
     try{
       const rows=await fetchEquip(tableAtClick, btn.getAttribute('data-compartment'));
       if (currentTable !== tableAtClick) return;
       renderEquipInSlot(slot, rows, tableAtClick, btn.getAttribute('data-compartment'));
-    } catch(err){ slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
+    }catch(err){
+      slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`;
+    }
   }
+
+  // Klik w wóz → lista skrytek pokazana na środku pod akcjami
   fleetButtons?.addEventListener('click', async (e)=>{
     const btn=e.target.closest('[data-vehicle]'); if(!btn) return;
+
     $$('#fleetButtons .btn').forEach(b=>b.classList.remove('primary')); btn.classList.add('primary');
     currentVehicle=btn.getAttribute('data-vehicle');
     currentTable = vehicleToTableName(currentVehicle);
+
     if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
-    compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments();
-    try{ const list=await fetchCompartmentsInTableOrder(currentTable); renderCompartments(list); }
-    catch(err){ compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`; }
+
+    compartmentsBox.innerHTML='';
+    expandAllBtn.disabled=true; sendShortagesBtn.disabled=true;
+    showLoadingCompartments();
+
+    try{
+      const list=await fetchCompartmentsInTableOrder(currentTable);
+      renderCompartments(list);
+    }catch(err){
+      compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
+    }
   });
+
+  // Klik w skrytkę / sprzęt
   compartmentsBox?.addEventListener('click', async (e)=>{
-    const btn=e.target.closest('.compartment-btn'); if(btn && currentTable) return openCompartment(btn);
-    const row=e.target.closest('.equip-row'); if(row){
+    const btn=e.target.closest('.compartment-btn');
+    if(btn && currentTable){ return openCompartment(btn); }
+
+    const row=e.target.closest('.equip-row');
+    if(row){
       const k=keyFor(currentTable,row.dataset.compartment,row.dataset.id);
       row.classList.toggle('selected');
       if(row.classList.contains('selected')) selectedSet.add(k); else selectedSet.delete(k);
     }
   });
+
+  // Rozwiń wszystkie
   expandAllBtn?.addEventListener('click', async ()=>{
-    if(!currentTable) return; const items=$$('#compartments .compartment-item');
+    if(!currentTable) return;
+    const items=$$('#compartments .compartment-item');
     const tableAtClick = currentTable;
     await Promise.all(items.map(async item=>{
-      const b=item.querySelector('.compartment-btn'); const s=item.querySelector('.equip-slot');
+      const b=item.querySelector('.compartment-btn');
+      const s=item.querySelector('.equip-slot');
       if(s.dataset.open==='true' && s.children.length) return;
-      b.classList.add('primary'); s.dataset.open='true'; showLoadingEquipInSlot(s);
-      try{ const rows=await fetchEquip(tableAtClick, b.getAttribute('data-compartment'));
-        if (currentTable !== tableAtClick) return; renderEquipInSlot(s, rows, tableAtClick, b.getAttribute('data-compartment'));
-      } catch(err){ s.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
+      b.classList.add('primary');
+      s.dataset.open='true';
+      showLoadingEquipInSlot(s);
+      try{
+        const rows=await fetchEquip(tableAtClick, b.getAttribute('data-compartment'));
+        if (currentTable !== tableAtClick) return;
+        renderEquipInSlot(s, rows, tableAtClick, b.getAttribute('data-compartment'));
+      } catch(err){
+        s.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`;
+      }
     }));
     if(!collapseAllBtn){
       collapseAllBtn=document.createElement('button');
-      collapseAllBtn.className='btn'; collapseAllBtn.textContent='Zwiń wszystkie';
-      collapseAllBtn.style.marginTop='12px'; collapseAllBtn.style.width='100%';
+      collapseAllBtn.className='btn';
+      collapseAllBtn.textContent='Zwiń wszystkie';
+      collapseAllBtn.style.marginTop='12px';
+      collapseAllBtn.style.width='100%';
       collapseAllBtn.addEventListener('click',()=>{
         $$('#compartments .equip-slot').forEach(s=>{ s.dataset.open='false'; s.innerHTML=''; });
         $$('#compartments .compartment-btn').forEach(b=>b.classList.remove('primary'));
@@ -664,7 +732,7 @@
     }
   });
 
-  // ===== WYŚLIJ BRAKI -> INSERT do public.shortages =====
+  // ===== WYŚLIJ BRAKI =====
   document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{
     if(!currentVehicle || !currentTable) return;
     const selectedKeys = [...selectedSet].filter(k => k.startsWith(currentTable + '|'));
@@ -801,7 +869,7 @@
     setTimeout(()=>{ loadTodayTask(); scheduleMidnightRefresh(); }, Math.max(1000, ms));
   })();
 
-  /* ===== SPRZĘT JRG — WYSZUKIWARKA SPRZĘTU (render mobilny z data-label) ===== */
+  /* ===== SPRZĘT JRG — WYSZUKIWARKA SPRZĘTU ===== */
   const equipQueryInput = document.getElementById('equipQuery');
   const equipSearchBtn  = document.getElementById('equipSearchBtn');
   const equipInfo       = document.getElementById('equipInfo');
