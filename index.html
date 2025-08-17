@@ -29,7 +29,7 @@
   .sub{ color:var(--muted); margin:.25rem 0 1rem; }
   .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
 
-  /* PRZYCISKI — stały border 1px, bez zmiany wymiarów między stanami */
+  /* PRZYCISKI — stały border 1px (nie znika), bez zmiany wymiarów między stanami */
   .btn{
     appearance:none; background:#fff; color:#000; border:1px solid var(--line);
     padding:10px 12px; border-radius:6px; cursor:pointer;
@@ -40,7 +40,7 @@
   .btn.primary:hover{ background:#111; }
   .btn.block{ width:100%; }
   .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #000; }
-  /* przyciski wozów — nie zawijają się w środku, nie rozszerzają layoutu */
+  /* przyciski wozów — nie rozszerzają layoutu, ucinamy z elipsą gdy za długie */
   .fleet-buttons .btn[data-vehicle]{ white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 
   .form-grid{ display:grid; gap:10px; }
@@ -60,14 +60,14 @@
     display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:flex-start;
   }
 
-  /* Kafelek wozu, zawiera przycisk i (na mobile) panel overlay pod przyciskiem */
+  /* Kafelek wozu (anchor dla overlay) */
   .vehicle-tile{
     display:flex; flex-direction:column; gap:8px; align-items:stretch;
-    position:relative; /* kotwica dla overlay */
+    position:relative;
     flex:0 0 auto;
   }
 
-  /* Domyślne pudełko na skrytki (używane jako overlay na mobile) */
+  /* Pudełko na skrytki (overlay na mobile) */
   .inline-slot{
     border:1px solid var(--line);
     border-radius:8px;
@@ -79,21 +79,20 @@
 
   /* === MOBILE overlay === */
   @media (max-width:767.98px){
-    /* ukrywamy globalny panel skrytek/akcji, bo używamy panelu overlay w kafelku */
+    /* ukrywamy globalny panel skrytek/akcji na mobile */
     .actions-wrap, .compartments-wrap{ display:none !important; }
 
-    /* panel jest poza normalnym układem — nie przepycha innych przycisków */
+    /* overlay nie przepycha przycisków i nie wychodzi poza ekran */
     .vehicle-tile .inline-slot[hidden]{ display:none !important; }
     .vehicle-tile .inline-slot:not([hidden]){
       position:absolute;
-      top: calc(100% + 8px);   /* tuż pod przyciskiem */
-      left:0; right:0;         /* dopasowanie do szerokości kafelka */
+      top: calc(100% + 8px);
+      left:0; right:0;
       z-index:20;
-      max-height:70vh;         /* przewijanie w środku, nie rozpycha strony */
+      max-height:70vh;
       overflow:auto;
-      width: min(var(--comp-width), 100vw - 24px); /* nie wyjdzie poza ekran */
-      margin-inline: auto;
-      /* lekkie cieniowanie dla czytelności overlay */
+      width: min(var(--comp-width), 100vw - 24px);
+      margin-inline:auto;
       box-shadow:0 6px 0 #000;
     }
   }
@@ -132,33 +131,15 @@
   .today-card h3{ margin:0 0 6px; font-size:1.1rem; }
   .today-card .tasks{ white-space:pre-wrap; }
 
-  /* BRAKI: tylko ta tabela */
-  #shortagesTable {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid var(--line);
-  }
-  #shortagesTable th,
-  #shortagesTable td {
-    border: 1px solid var(--line);
-    padding: 8px 10px;
-    text-align: center;
-  }
-  #shortagesTable thead th {
-    background: #f4f4f4;
-    font-weight: 700;
-  }
-  #shortagesTable tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
+  /* BRAKI: tabela */
+  #shortagesTable { width:100%; border-collapse:collapse; border:1px solid var(--line); }
+  #shortagesTable th,#shortagesTable td { border:1px solid var(--line); padding:8px 10px; text-align:center; }
+  #shortagesTable thead th { background:#f4f4f4; font-weight:700; }
+  #shortagesTable tbody tr:nth-child(even){ background:#f9f9f9; }
 
-  /* Sprzęt JRG — tabela wyników wyszukiwarki */
-  #equipResultsTable{
-    width:100%; border-collapse:collapse; border:1px solid var(--line); margin-top:12px;
-  }
-  #equipResultsTable th, #equipResultsTable td{
-    border:1px solid var(--line); padding:8px 10px; text-align:center;
-  }
+  /* Sprzęt JRG — tabela wyników */
+  #equipResultsTable{ width:100%; border-collapse:collapse; border:1px solid var(--line); margin-top:12px; }
+  #equipResultsTable th,#equipResultsTable td{ border:1px solid var(--line); padding:8px 10px; text-align:center; }
   #equipResultsTable thead th{ background:#f4f4f4; font-weight:700; }
   #equipResultsTable tbody tr:nth-child(even){ background:#f9f9f9; }
 </style>
@@ -198,7 +179,7 @@
     </div>
   </section>
 
-  <!-- AUTH -->
+  <!-- AUTH (przywrócone 1:1) -->
   <section id="auth">
     <div class="wrap">
       <div class="card" id="authCard">
@@ -263,7 +244,7 @@
       <div class="card">
         <div class="fleet-top">
           <div id="fleetButtons" class="fleet-buttons">
-            <!-- Każdy przycisk w kafelku z miejscem na panel overlay (mobile) -->
+            <!-- Kafelki z overlay (mobile) -->
             <div class="vehicle-tile" data-vehicle="411-22">
               <button class="btn" data-vehicle="411-22">411-22</button>
               <div class="inline-slot" hidden></div>
@@ -326,7 +307,7 @@
     </div>
   </section>
 
-  <!-- Sprzęt JRG (WYSZUKIWARKA SPRZĘTU) -->
+  <!-- Sprzęt JRG -->
   <section id="equip" class="hidden">
     <div class="wrap">
       <div class="card">
@@ -352,9 +333,7 @@
                 <th>ILOŚĆ</th>
               </tr>
             </thead>
-            <tbody id="equipResultsBody">
-              <!-- wiersze z JS -->
-            </tbody>
+            <tbody id="equipResultsBody"></tbody>
           </table>
         </div>
       </div>
@@ -444,10 +423,10 @@
   const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
 
   const normalizePhone = v => (v||'').toString().replace(/\D/g,'');
-  const phoneToEmail   = digits => \`\${digits}@phones.local\`;
+  const phoneToEmail   = digits => `${digits}@phones.local`;
   const setBtnLoading  = (btn, on, idle, loading) => { btn.disabled = on; btn.textContent = on ? loading : idle; };
   const showBanner = (text, type='ok', ms=3000) => {
-    const b = $('#banner'); b.textContent = text; b.className = \`banner \${type}\`; b.classList.remove('hidden');
+    const b = $('#banner'); b.textContent = text; b.className = `banner ${type}`; b.classList.remove('hidden');
     clearTimeout(showBanner._t); showBanner._t = setTimeout(()=>b.classList.add('hidden'), ms);
   };
   const formatDate = (v) => {
@@ -455,19 +434,18 @@
     const d = new Date(v.replace(' ', 'T'));
     const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
     const hh = String(d.getHours()).padStart(2,'0'), mi = String(d.getMinutes()).padStart(2,'0');
-    return \`\${yyyy}-\${mm}-\${dd} \${hh}:\${mi}\`;
+    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
   };
   function vehicleToTableName(vehicle){
-    let t = vehicle.replace(/\\s+/g,'_').replaceAll('-','_');
+    let t = vehicle.replace(/\s+/g,'_').replaceAll('-','_');
     const map = {'ł':'l','Ł':'L','ą':'a','Ą':'A','ć':'c','Ć':'C','ę':'e','Ę':'E','ń':'n','Ń':'N','ó':'o','Ó':'O','ś':'s','Ś':'S','ź':'z','Ź':'Z','ż':'z','Ż':'Z'};
     t = t.replace(/./g, ch => map[ch] || ch);
     return t;
   }
   function tableToVehicleName(table){
-    // odwrotność powyższego: "411_22_Tyl" -> "411-22 Tył"
     let v = table.replaceAll('_',' ');
-    v = v.replace(/^(\\d{3}) (\\d{2})/, (_,a,b)=>\`\${a}-\${b}\`);
-    v = v.replace(/Tyl\\b/,'Tył');
+    v = v.replace(/^(\d{3}) (\d{2})/, (_,a,b)=>`${a}-${b}`);
+    v = v.replace(/Tyl\b/,'Tył');
     return v;
   }
 
@@ -478,7 +456,7 @@
     auth: { persistSession: true, autoRefreshToken: true, storageKey: 'wozy-auth' }
   });
 
-  // ===== Elementy/sekcje =====
+  // ===== Sekcje / menu =====
   const menuAuth = $('#menuAuth');
   const menuApp  = $('#menuApp');
   const authBox = $('#authBox');
@@ -492,7 +470,7 @@
 
   const sections = [sectionHome, sectionAuth, sectionFleet, sectionEquip, sectionKnowledge, sectionShort];
 
-  // --- ZAPAMIĘTYWANIE OSTATNIEJ SEKCJI
+  // Pamiętanie ostatniej sekcji
   let lastSectionId = localStorage.getItem('lastSectionId') || '#home';
 
   function showOnly(section){
@@ -503,14 +481,14 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ===== Uprawnienia do ekranu Braki =====
+  // Uprawnienia do ekranu Braki
   async function isViewer(userId){
     if (!userId) return false;
     const { data } = await supabase.from('shortages_viewers').select('user_id').eq('user_id', userId).maybeSingle();
     return !!data;
   }
 
-  // ===== Auth UI =====
+  // ===== Auth UI (przywrócone) =====
   async function refreshAuthUI(session){
     try{
       if (session?.user){
@@ -541,7 +519,7 @@
   supabase.auth.onAuthStateChange((_e, session) => refreshAuthUI(session));
   supabase.auth.getSession().then(({ data }) => refreshAuthUI(data.session));
 
-  // ===== Rejestracja / Logowanie =====
+  // ===== Rejestracja / Logowanie (przywrócone) =====
   const loginPhone = $('#loginPhone');
   const loginPass  = $('#loginPass');
   const loginBtn   = $('#loginBtn');
@@ -585,7 +563,6 @@
     } finally { setBtnLoading(regBtn, false, 'Zarejestruj', 'Rejestracja...'); }
   });
 
-  // ===== Logowanie — po sukcesie HOME =====
   loginBtn?.addEventListener('click', async () => {
     loginErr.textContent = '';
     const digits = (loginPhone.value||'').replace(/\D/g,''); const pass = loginPass.value;
@@ -614,8 +591,8 @@
   let collapseAllBtn = null;
 
   let currentVehicle = null, currentTable = null;
-  const selectedSet = new Set();       // {table|compartment|id}
-  const keyFor = (t,c,id)=>\`\${t}|\${c}|\${id}\`;
+  const selectedSet = new Set();
+  const keyFor = (t,c,id)=>`${t}|${c}|${id}`;
 
   async function fetchCompartmentsInTableOrder(table){
     const { data, error } = await supabase.from(table).select('id, compartment').not('compartment','is',null).order('id',{ascending:true});
@@ -643,12 +620,12 @@
     slot.innerHTML=''; if(!rows.length){ slot.innerHTML='<div class="sub">Brak sprzętu w tej skrytce.</div>'; return; }
     rows.forEach(r=>{ const row=document.createElement('div'); row.className='equip-row'; row.dataset.id=String(r.id); row.dataset.compartment=compartment; row.dataset.table=table;
       if(selectedSet.has(keyFor(table,compartment,r.id))) row.classList.add('selected');
-      row.innerHTML=\`<div class="equip-name">\${r['SPRZĘT']}</div><div class="qty-badge">\${r['ILOŚĆ']}</div>\`;
+      row.innerHTML=`<div class="equip-name">${r['SPRZĘT']}</div><div class="qty-badge">${r['ILOŚĆ']}</div>`;
       slot.appendChild(row);
     });
   }
 
-  // ====== DESKTOP flow (globalny panel) ======
+  // ====== DESKTOP flow ======
   async function openCompartmentDesktop(btn){
     const slot=btn.nextElementSibling; if(!slot) return;
     $$('#compartments .compartment-btn').forEach(b=>{ if(b!==btn) b.classList.remove('primary'); });
@@ -670,7 +647,7 @@
     const vehicle = btn.getAttribute('data-vehicle');
     const table   = vehicleToTableName(vehicle);
 
-    // podświetlenie aktywnego przycisku (oboje trybów)
+    // podświetlenie aktywnego przycisku
     $$('#fleetButtons .btn[data-vehicle]').forEach(b=>b.classList.remove('primary'));
     btn.classList.add('primary');
 
@@ -678,15 +655,20 @@
     currentTable   = table;
 
     if (mqDesktop.matches){
-      // ===== DESKTOP: globalny panel
+      // DESKTOP: globalny panel
       if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
       compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments(compartmentsBox);
-      try{ const list=await fetchCompartmentsInTableOrder(currentTable); renderCompartments(compartmentsBox, list, currentTable); expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex'; }
-      catch(err){ compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`; }
-      // zamknij wszystkie panele overlay (na wszelki wypadek)
+      try{
+        const list=await fetchCompartmentsInTableOrder(currentTable);
+        renderCompartments(compartmentsBox, list, currentTable);
+        expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex';
+      }catch(err){
+        compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
+      }
+      // zamknij overlaye
       $$('#fleetButtons .inline-slot').forEach(s=>{ s.hidden = true; s.innerHTML=''; });
     } else {
-      // ===== MOBILE: panel overlay w kafelku
+      // MOBILE: overlay w kafelku
       // zamknij inne overlaye
       $$('#fleetButtons .inline-slot').forEach(s=>{ if(s!==tile.querySelector('.inline-slot')){ s.hidden = true; s.innerHTML=''; } });
       const slot = tile.querySelector('.inline-slot');
@@ -708,12 +690,11 @@
       }catch(err){
         localBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
       }
-      // przewiń tylko jeśli panel nie jest na ekranie
       slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
   });
 
-  // Desktop: obsługa klików w skrytkach + wybór braków
+  // Desktop: klik w skrytkach + wybór braków
   compartmentsBox?.addEventListener('click', async (e)=>{
     const cbtn = e.target.closest('.compartment-btn'); if(cbtn && currentTable) return openCompartmentDesktop(cbtn);
     const row=e.target.closest('.equip-row'); if(row){
@@ -751,12 +732,10 @@
   // Desktop: WYŚLIJ BRAKI
   document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{ await sendShortagesForCurrent(); });
 
-  // ===== MOBILE: delegacja zdarzeń wewnątrz overlay (akcje, skrytki, wybór braków) =====
+  // MOBILE: zdarzenia w overlay
   fleetButtons?.addEventListener('click', async (e)=>{
-    const slot = e.target.closest('.inline-slot'); // klik wewnątrz otwartego overlay
-    if(!slot) return;
+    const slot = e.target.closest('.inline-slot'); if(!slot) return;
 
-    // klik akcji
     const actBtn = e.target.closest('[data-mobile-actions] [data-act]');
     if(actBtn){
       const act = actBtn.getAttribute('data-act');
@@ -778,14 +757,12 @@
       return;
     }
 
-    // klik skrytki
     const cbtn = e.target.closest('.compartment-btn');
     if(cbtn){
       const s = cbtn.nextElementSibling;
       if (s.dataset.open === 'true'){
         s.dataset.open = 'false'; s.innerHTML = ''; cbtn.classList.remove('primary'); return;
       }
-      // zamknij inne skrytki tylko w tym overlay
       $$('.equip-slot', slot).forEach(x=>{ if(x!==s){ x.dataset.open='false'; x.innerHTML=''; }});
       $$('.compartment-btn', slot).forEach(b=>{ if(b!==cbtn){ b.classList.remove('primary'); }});
 
@@ -799,7 +776,6 @@
       return;
     }
 
-    // klik wiersza sprzętu = zaznacz brak
     const row = e.target.closest('.equip-row');
     if(row){
       const t = row.dataset.table, c = row.dataset.compartment, id = row.dataset.id;
@@ -809,7 +785,7 @@
     }
   });
 
-  // Wspólny zapis braków (desktop i mobile używają tego samego)
+  // Wspólny zapis braków
   async function sendShortagesForCurrent(){
     if(!currentVehicle || !currentTable) return;
     const selectedKeys = [...selectedSet].filter(k => k.startsWith(currentTable + '|'));
@@ -835,13 +811,12 @@
       if (error) throw error;
       showBanner(`Wysłano braki: ${rows.length} wiersz(y).`, 'ok', 4000);
       for (const k of [...selectedSet]) if (k.startsWith(currentTable + '|')) selectedSet.delete(k);
-      // odznacz w obu trybach
       $$('#compartments .equip-row.selected').forEach(r => r.classList.remove('selected'));
       $$('#fleetButtons .inline-slot .equip-row.selected').forEach(r => r.classList.remove('selected'));
     }catch(err){ showBanner('Błąd zapisu braków.', 'err', 5000); }
   }
 
-  // ===== EKRAN BRAKI – pobieranie + filtry =====
+  // ===== EKRAN BRAKI =====
   const fltDateFrom = $('#fltDateFrom'), fltDateTo = $('#fltDateTo'), fltVehicle = $('#fltVehicle'), fltUser = $('#fltUser');
   const btnSearch = $('#btnSearch'), tableBody = $('#shortagesTable tbody'), rowsInfo = $('#rowsInfo');
   const pageInfo = $('#pageInfo'), btnPrev = $('#btnPrev'), btnNext = $('#btnNext');
@@ -850,8 +825,8 @@
     let q = supabase.from('shortages').select('"SPRZĘT","WÓZ","DATA","ZMIANA","UŻYTKOWNIK"', { count: 'exact' }).order('DATA', { ascending:false });
     if (fltDateFrom.value){ q = q.gte('DATA', fltDateFrom.value + ' 00:00'); }
     if (fltDateTo.value){   q = q.lte('DATA', fltDateTo.value + ' 23:59'); }
-    if (fltVehicle.value){  q = q.ilike('"WÓZ"', \`%\${fltVehicle.value}%\`); }
-    if (fltUser.value){     q = q.ilike('"UŻYTKOWNIK"', \`%\${fltUser.value}%\`); }
+    if (fltVehicle.value){  q = q.ilike('"WÓZ"', `%${fltVehicle.value}%`); }
+    if (fltUser.value){     q = q.ilike('"UŻYTKOWNIK"', `%${fltUser.value}%`); }
     return q.range((page-1)*pageSize, page*pageSize - 1);
   }
   async function loadShortages(){
@@ -862,8 +837,8 @@
       if (error) throw error;
       lastRows = data || [];
       renderTable(lastRows);
-      rowsInfo.textContent = \`Wyników: \${count ?? lastRows.length}\`;
-      pageInfo.textContent = \`Strona \${page}\`;
+      rowsInfo.textContent = `Wyników: ${count ?? lastRows.length}`;
+      pageInfo.textContent = `Strona ${page}`;
       btnPrev.disabled = page <= 1;
       btnNext.disabled = (count ?? lastRows.length) <= page * pageSize;
     }catch(e){
@@ -888,7 +863,7 @@
   btnPrev?.addEventListener('click', ()=>{ if(page>1){ page--; loadShortages(); } });
   btnNext?.addEventListener('click', ()=>{ page++; loadShortages(); });
 
-  // ====== MENU: obsługa kliknięć ======
+  // ====== MENU ======
   document.querySelector('a[href="#home"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionHome); loadTodayTask(); });
   document.querySelector('a[href="#fleet"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionFleet); });
   document.querySelector('a[href="#equip"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionEquip); });
@@ -900,19 +875,19 @@
     if (!canSee){ showBanner('Brak uprawnień do podglądu braków.', 'err', 3500); return; }
     if (!document.getElementById('fltDateFrom').value && !document.getElementById('fltDateTo').value){
       const d = new Date(); const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
-      document.getElementById('fltDateFrom').value = \`\${y}-\${m}-\${dd}\`;
-      document.getElementById('fltDateTo').value   = \`\${y}-\${m}-\${dd}\`;
+      document.getElementById('fltDateFrom').value = `${y}-${m}-${dd}`;
+      document.getElementById('fltDateTo').value   = `${y}-${m}-${dd}`;
     }
     showOnly(sectionShort);
     page = 1; loadShortages();
   });
 
-  // ===== HOME: dzisiejsze zadanie (Europe/Warsaw) =====
+  // ===== HOME: dzisiejsze zadanie =====
   const todayBox = document.getElementById('todayBox');
   function getWarsawDow(){
     const now = new Date();
     const warsaw = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
-    const day = warsaw.getDay(); // 0=Nd..6=Sob
+    const day = warsaw.getDay();
     return day === 0 ? 7 : day;  // 1=Pon..7=Nd
   }
   async function loadTodayTask(){
@@ -948,13 +923,12 @@
     setTimeout(()=>{ loadTodayTask(); scheduleMidnightRefresh(); }, Math.max(1000, ms));
   })();
 
-  /* ===== SPRZĘT JRG — WYSZUKIWARKA SPRZĘTU ===== */
+  /* ===== Sprzęt JRG — wyszukiwarka ===== */
   const equipQueryInput = document.getElementById('equipQuery');
   const equipSearchBtn  = document.getElementById('equipSearchBtn');
   const equipInfo       = document.getElementById('equipInfo');
   const equipResultsBody= document.getElementById('equipResultsBody');
 
-  // podaj listę tabel (takie same jak w Listach Wozów)
   const EQUIP_TABLES = [
     '411_22','411_23','411_25','411_26','411_43','411_51','411_71','411_91',
     '411_59','411_22_Tyl','411_23_Tyl'
@@ -967,12 +941,11 @@
     equipResultsBody.innerHTML = '<tr><td colspan="4">Ładowanie…</td></tr>';
 
     const results = [];
-    // równoległe zapytania do wszystkich tabel
     await Promise.all(EQUIP_TABLES.map(async (tbl) => {
       const { data, error } = await supabase
         .from(tbl)
         .select('compartment, "SPRZĘT","ILOŚĆ"')
-        .ilike('"SPRZĘT"', \`%\${q}%\`);
+        .ilike('"SPRZĘT"', `%${q}%`);
       if (!error && data && data.length){
         data.forEach(r => results.push({
           item: (r['SPRZĘT']||'').toString(),
@@ -983,16 +956,14 @@
       }
     }));
 
-    // posortuj: po nazwie wozu, potem skrytce
     results.sort((a,b)=> (a.vehicle.localeCompare(b.vehicle) || a.compartment.localeCompare(b.compartment) || a.item.localeCompare(b.item)));
 
-    // render
     if (!results.length){
       equipInfo.textContent = 'Brak wyników.';
       equipResultsBody.innerHTML = '<tr><td colspan="4">Brak wyników.</td></tr>';
       return;
     }
-    equipInfo.textContent = \`Znaleziono: \${results.length}\`;
+    equipInfo.textContent = `Znaleziono: ${results.length}`;
     equipResultsBody.innerHTML = '';
     results.forEach(r => {
       const tr = document.createElement('tr');
@@ -1003,7 +974,6 @@
 
   equipSearchBtn?.addEventListener('click', ()=> searchEquipmentGlobal(equipQueryInput.value));
   equipQueryInput?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); searchEquipmentGlobal(equipQueryInput.value); } });
-
 </script>
 </body>
 </html>
