@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Listy Wozów — czarno-biały</title>
+<meta name="description" content="Listy Wozów, skrytki i sprzęt. Supabase Auth + dane." />
+<style>
+  :root{ --bg:#fff; --fg:#000; --muted:#444; --line:#000; --gap:16px; --radius:8px; --red:#c00; --green:#0a0; --comp-width:420px; }
+  *{ box-sizing:border-box; } html,body{ height:100%; }
+  body{ margin:0; background:#fff; color:#000; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+  a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .wrap{ width:min(1080px,92vw); margin-inline:auto; }
+
+  header{ border-bottom:1px solid var(--line); background:#fff; position:sticky; top:0; z-index:10; }
+  .nav{ display:flex; align-items:center; gap:var(--gap); padding:12px 0; }
+  .nav ul{ margin-left:0; display:flex; gap:12px; list-style:none; padding:0; }
+  .nav a{ text-decoration:none; padding:8px 10px; border-radius:6px; font-weight:700; } /* pogrubione menu */
+  .nav a:hover{ background:#f2f2f2; }
+  .authbox{ margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .user-badge{ border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:700; cursor:pointer; white-space:nowrap; }
+
+  /* na wąskich ekranach nagłówek może się zawinąć – bez poziomego scrolla */
+  .nav{ flex-wrap:wrap; }
+  .nav ul{ flex-wrap:wrap; }
+  @media (max-width:600px){
+    .wrap{ width:100%; padding-inline:12px; }
+    .nav{ gap:8px; }
+    .nav ul{ gap:8px; }
+    .authbox{ margin-left:0; }
+  }
+  html,body{ overflow-x:hidden; } /* bezpiecznik przed poziomowym scrollowaniem */
+
+  .banner{ position:fixed; left:50%; transform:translateX(-50%); top:8px; z-index:9999;
+    padding:10px 14px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 2px 0 #000; font-weight:700; }
+  .banner.ok{ color:var(--green); border-color:var(--green); }
+  .banner.err{ color:var(--red); border-color:var(--red); }
+
+  section{ padding:48px 0; } h1,h2,h3{ line-height:1.2; margin:0 0 .5rem; }
+  .sub{ color:var(--muted); margin:.25rem 0 1rem; }
+  .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
+
+  .btn{
+    appearance:none; background:#fff; color:#000; border:1px solid var(--line);
+    padding:10px 12px; border-radius:6px; cursor:pointer;
+    box-shadow:0 2px 0 #000; font-weight:700;
+  }
+  .btn:hover{ background:#f6f6f6; }
+  .btn.primary{ background:#000; color:#fff; }
+  .btn.primary:hover{ background:#111; }
+  .btn.block{ width:100%; }
+  .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #000; }
+
+  .form-grid{ display:grid; gap:10px; }
+  .field{ display:grid; gap:6px; }
+  .field label{ font-weight:700; }
+  .input{
+    border:1px solid var(--line); border-radius:6px; padding:10px 12px; background:#fff; color:#000; font:inherit;
+    box-shadow:0 2px 0 #000;
+  }
+  .row-2{ display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+  @media (max-width:600px){ .row-2{ grid-template-columns:1fr; } }
+  .error{ color:var(--red); font-weight:700; min-height:1.2em; }
+  .okline{ color:var(--green); font-weight:700; min-height:1.2em; }
+
+  .fleet-top{ display:flex; justify-content:center; }
+  .fleet-buttons{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:100%; } /* bez wystawania */
+
+  .actions-wrap{ display:none; justify-content:center; margin-top:12px; }
+  .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+  .compartments-wrap{ display:flex; justify-content:center; margin-top:16px; }
+  .compartments{ display:flex; flex-direction:column; gap:8px; width:var(--comp-width); max-width:100%; }
+  .compartment-item{ width:100%; }
+  .btn.compartment-btn{ width:100%; text-align:center; }
+
+  .equip-slot{ margin-top:8px; }
+  .equip-row{
+    display:grid; grid-template-columns:1fr auto; gap:10px;
+    padding:10px 12px; border:1px solid var(--line); border-radius:6px; cursor:pointer;
+  }
+  .equip-row + .equip-row{ margin-top:8px; }
+  .equip-name{ font-weight:700; }
+  .qty-badge{ border:1px solid var(--line); border-radius:999px; padding:4px 10px; }
+
+  .equip-row.selected{ color:var(--red); border-color:var(--red); }
+  .equip-row.selected .qty-badge{ border-color:var(--red); }
+
+  .skeleton{ position:relative; overflow:hidden; background:#fafafa; border:1px solid var(--line); border-radius:6px; }
+  .skeleton::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(0,0,0,.05),transparent); animation:shimmer 1s infinite; }
+  @keyframes shimmer{ 0%{ transform:translateX(-100%);} 100%{ transform:translateX(100%);} }
+
+  footer{ border-top:1px solid var(--line); padding:20px 0 40px; color:#222; }
+  .hidden{ display:none !important; }
+  .hint{ font-size:.9rem; color:#222; }
+  .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+  /* HOME */
+  .today-card{ border:1px solid var(--line); border-radius:8px; padding:16px; background:#fff; box-shadow:0 2px 0 #000; }
+  .today-card h3{ margin:0 0 6px; font-size:1.1rem; }
+  .today-card .tasks{ white-space:pre-wrap; }
+
+  /* BRAKI: tylko ta tabela */
+  #shortagesTable {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+  }
+  #shortagesTable th,
+  #shortagesTable td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: center;
+  }
+  #shortagesTable thead th {
+    background: #f4f4f4;
+    font-weight: 700;
+  }
+  #shortagesTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  /* Sprzęt JRG — tabela wyników wyszukiwarki */
+  #equipResultsTable{
+    width:100%; border-collapse:collapse; border:1px solid var(--line); margin-top:12px;
+  }
+  #equipResultsTable th, #equipResultsTable td{
+    border:1px solid var(--line); padding:8px 10px; text-align:center;
+  }
+  #equipResultsTable thead th{ background:#f4f4f4; font-weight:700; }
+  #equipResultsTable tbody tr:nth-child(even){ background:#f9f9f9; }
+</style>
+</head>
+<body>
+  <div id="banner" class="banner hidden"></div>
+
+<header>
+  <div class="wrap nav" role="navigation">
+    <!-- MENU dla niezalogowanych -->
+    <ul id="menuAuth">
+      <li><a href="#auth">Logowanie</a></li>
+    </ul>
+
+    <!-- MENU po zalogowaniu -->
+    <ul id="menuApp" class="hidden">
+      <li><a href="#home" data-nav>Home</a></li>
+      <li><a href="#fleet" data-nav>Listy Wozów</a></li>
+      <li><a href="#equip" data-nav>Sprzęt JRG</a></li>
+      <li><a href="#knowledge" data-nav>Wiedza</a></li>
+      <li><a href="#shortages" data-nav id="menuShortagesLink">Braki</a></li>
+    </ul>
+
+    <div class="authbox" id="authBox"></div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HOME -->
+  <section class="hero" id="home">
+    <div class="wrap">
+      <h1>Home</h1>
+      <div id="todayBox" aria-live="polite"></div>
+      <div class="cta" style="margin-top:12px;">
+        <a class="btn primary" href="#fleet" data-nav>Przejdź do list</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH -->
+  <section id="auth">
+    <div class="wrap">
+      <div class="card" id="authCard">
+        <div class="row-2">
+          <!-- LOGIN -->
+          <div>
+            <h2>Logowanie</h2>
+            
+            <div class="form-grid">
+              <div class="field">
+                <label for="loginPhone">Telefon</label>
+                <input id="loginPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
+                
+              </div>
+              <div class="field">
+                <label for="loginPass">Hasło</label>
+                <input id="loginPass" class="input" type="password" autocomplete="current-password" />
+              </div>
+              <div class="error" id="loginError" aria-live="polite"></div>
+              <button type="button" class="btn primary block" id="loginBtn">Zaloguj</button>
+            </div>
+          </div>
+
+          <!-- REGISTER -->
+          <div>
+            <h2>Rejestracja</h2>
+            
+            <div class="form-grid">
+              <div class="field">
+                <label for="regPhone">Telefon</label>
+                <input id="regPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
+                
+              </div>
+              <div class="field">
+                <label for="regShift">Zmiana</label>
+                <select id="regShift" class="input">
+                  <option value="">Wybierz zmianę</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="Biuro">Biuro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="regPass">Hasło</label>
+                <input id="regPass" class="input" type="password" autocomplete="new-password" />
+              </div>
+              <div class="field">
+                <label for="regPass2">Potwierdź hasło</label>
+                <input id="regPass2" class="input" type="password" autocomplete="new-password" />
+              </div>
+              <div class="error" id="regError" aria-live="polite"></div>
+              <div class="okline" id="regOk" aria-live="polite" style="display:none"></div>
+              <button type="button" class="btn primary block" id="registerBtn">Zarejestruj</button>
+            </div>
+          </div>
+        </div>
+        <p class="sub" id="authDebug" style="margin-top:12px"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLEET -->
+  <section id="fleet" class="hidden">
+    <div class="wrap">
+      <div class="card">
+        <div class="fleet-top">
+          <div id="fleetButtons" class="fleet-buttons">
+            <button class="btn" data-vehicle="411-22">411-22</button>
+            <button class="btn" data-vehicle="411-23">411-23</button>
+            <button class="btn" data-vehicle="411-25">411-25</button>
+            <button class="btn" data-vehicle="411-26">411-26</button>
+            <button class="btn" data-vehicle="411-43">411-43</button>
+            <button class="btn" data-vehicle="411-51">411-51</button>
+            <button class="btn" data-vehicle="411-71">411-71</button>
+            <button class="btn" data-vehicle="411-91">411-91</button>
+            <button class="btn" data-vehicle="411-59">411-59</button>
+            <button class="btn" data-vehicle="411-22 Tył">411-22 Tył</button>
+            <button class="btn" data-vehicle="411-23 Tył">411-23 Tył</button>
+          </div>
+        </div>
+
+        <div class="actions-wrap" id="actionsWrap">
+          <div class="actions">
+            <button class="btn" id="expandAllBtn" disabled>Rozwiń wszystkie</button>
+            <button class="btn primary" id="sendShortagesBtn" disabled>Wyślij Braki</button>
+          </div>
+        </div>
+
+        <div class="compartments-wrap">
+          <div id="compartments" class="compartments" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sprzęt JRG (WYSZUKIWARKA SPRZĘTU) -->
+  <section id="equip" class="hidden">
+    <div class="wrap">
+      <div class="card">
+        <h2>Sprzęt JRG — wyszukiwarka</h2>
+        <div class="form-grid" style="grid-template-columns:1fr auto; align-items:end;">
+          <div class="field">
+            <label for="equipQuery">Szukaj sprzętu</label>
+            <input id="equipQuery" class="input" type="text" placeholder="np. defibrylator, nożyce" />
+          </div>
+          <div>
+            <button id="equipSearchBtn" class="btn primary">Szukaj</button>
+          </div>
+        </div>
+        <div style="margin-top:8px" class="sub" id="equipInfo">Wpisz nazwę sprzętu i kliknij „Szukaj”.</div>
+
+        <div style="overflow:auto;">
+          <table id="equipResultsTable" aria-label="Wyniki wyszukiwania sprzętu">
+            <thead>
+              <tr>
+                <th>SPRZĘT</th>
+                <th>WÓZ</th>
+                <th>SKRYTKA</th>
+                <th>ILOŚĆ</th>
+              </tr>
+            </thead>
+            <tbody id="equipResultsBody">
+              <!-- wiersze z JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wiedza -->
+  <section id="knowledge" class="hidden">
+    <div class="wrap">
+      <div class="card">
+        <h2>Wiedza</h2>
+        <p class="sub">Materiały szkoleniowe, procedury, „ściągi”.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAKI -->
+  <section id="shortages" class="hidden">
+    <div class="wrap">
+      <div class="card">
+        <h2>Braki</h2>
+        <p class="sub">Podgląd zgłoszonych braków z bazy.</p>
+
+        <div class="filters">
+          <div class="field">
+            <label for="fltDateFrom">Data od</label>
+            <input id="fltDateFrom" class="input" type="date" />
+          </div>
+          <div class="field">
+            <label for="fltDateTo">Data do</label>
+            <input id="fltDateTo" class="input" type="date" />
+          </div>
+          <div class="field">
+            <label for="fltVehicle">Wóz</label>
+            <input id="fltVehicle" class="input" type="text" placeholder="np. 411-22" />
+          </div>
+          <div class="field">
+            <label for="fltUser">Użytkownik</label>
+            <input id="fltUser" class="input" type="text" placeholder="Imię i nazwisko" />
+          </div>
+          <div class="field">
+            <button id="btnSearch" class="btn primary">Szukaj</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <span id="rowsInfo" class="sub"></span>
+        </div>
+
+        <div style="overflow:auto; margin-top:12px;">
+          <table class="table" id="shortagesTable" aria-label="Tabela braków">
+            <thead>
+              <tr>
+                <th>SPRZĘT</th>
+                <th>WÓZ</th>
+                <th>DATA</th>
+                <th>ZMIANA</th>
+                <th>UŻYTKOWNIK</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="tfoot">
+          <div>
+            <button id="btnPrev" class="btn">« Poprzednia</button>
+            <button id="btnNext" class="btn">Następna »</button>
+          </div>
+          <div class="sub" id="pageInfo">Strona 1</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap">
+    <a class="btn" href="#top" aria-label="Do góry">Do góry</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
+<script>
+  // ===== Helpers =====
+  const $  = (s, el=document) => el.querySelector(s);
+  const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+
+  const normalizePhone = v => (v||'').toString().replace(/\D/g,'');
+  const phoneToEmail   = digits => `${digits}@phones.local`;
+  const setBtnLoading  = (btn, on, idle, loading) => { btn.disabled = on; btn.textContent = on ? loading : idle; };
+  const showBanner = (text, type='ok', ms=3000) => {
+    const b = $('#banner'); b.textContent = text; b.className = `banner ${type}`; b.classList.remove('hidden');
+    clearTimeout(showBanner._t); showBanner._t = setTimeout(()=>b.classList.add('hidden'), ms);
+  };
+  const formatDate = (v) => {
+    if (!v) return '';
+    const d = new Date(v.replace(' ', 'T'));
+    const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0'), mi = String(d.getMinutes()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+  };
+  function vehicleToTableName(vehicle){
+    let t = vehicle.replace(/\s+/g,'_').replaceAll('-','_');
+    const map = {'ł':'l','Ł':'L','ą':'a','Ą':'A','ć':'c','Ć':'C','ę':'e','Ę':'E','ń':'n','Ń':'N','ó':'o','Ó':'O','ś':'s','Ś':'S','ź':'z','Ź':'Z','ż':'z','Ż':'Z'};
+    t = t.replace(/./g, ch => map[ch] || ch);
+    return t;
+  }
+  function tableToVehicleName(table){
+    // odwrotność powyższego: "411_22_Tyl" -> "411-22 Tył"
+    let v = table.replaceAll('_',' ');
+    v = v.replace(/^(\d{3}) (\d{2})/, (_,a,b)=>`${a}-${b}`);
+    v = v.replace(/Tyl\b/,'Tył');
+    return v;
+  }
+
+  // ===== Supabase =====
+  const SUPABASE_URL = 'https://edihhrnejcdfashksssj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkaWhocm5lamNkZmFzaGtzc3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MzcyMzEsImV4cCI6MjA2OTMxMzIzMX0.ci5U5kcutKCKVePCu-S-CmsxKm7pup6Bjbralj1aF9Y';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'wozy-auth' }
+  });
+
+  // ===== Elementy/sekcje =====
+  const menuAuth = $('#menuAuth');
+  const menuApp  = $('#menuApp');
+  const authBox = $('#authBox');
+
+  const sectionHome = $('#home');
+  const sectionAuth  = $('#auth');
+  const sectionFleet = $('#fleet');
+  const sectionEquip = $('#equip');
+  const sectionKnowledge = $('#knowledge');
+  const sectionShort = $('#shortages');
+
+  const sections = [sectionHome, sectionAuth, sectionFleet, sectionEquip, sectionKnowledge, sectionShort];
+
+  // --- ZAPAMIĘTYWANIE OSTATNIEJ SEKCJI
+  let lastSectionId = localStorage.getItem('lastSectionId') || '#home';
+
+  function showOnly(section){
+    sections.forEach(s => s.classList.add('hidden'));
+    section.classList.remove('hidden');
+    lastSectionId = '#' + section.id;
+    try { localStorage.setItem('lastSectionId', lastSectionId); } catch(_) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===== Uprawnienia do ekranu Braki =====
+  async function isViewer(userId){
+    if (!userId) return false;
+    const { data } = await supabase.from('shortages_viewers').select('user_id').eq('user_id', userId).maybeSingle();
+    return !!data;
+  }
+
+  // ===== Auth UI =====
+  async function refreshAuthUI(session){
+    try{
+      if (session?.user){
+        menuAuth.classList.add('hidden'); 
+        menuApp.classList.remove('hidden');
+
+        // Imię i nazwisko w nagłówku zamiast "Zalogowano" + klik = pokaż "WYLOGUJ"
+        let displayName = 'Użytkownik';
+        try{
+          const userId = session.user.id;
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('full_name, phone_digits')
+            .eq('user_id', userId)
+            .maybeSingle();
+          if (prof?.full_name && prof.full_name.trim()){
+            displayName = prof.full_name.trim();
+          } else if (prof?.phone_digits){
+            displayName = `+48 ${prof.phone_digits.replace(/^48/,'')}`;
+          }
+        }catch(_){}
+
+        authBox.innerHTML = `
+          <button type="button" class="user-badge" id="userBadge">${displayName}</button>
+          <button type="button" class="btn" id="logoutBtn" style="display:none">Wyloguj</button>
+        `;
+        const userBadge = document.getElementById('userBadge');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        userBadge?.addEventListener('click', () => {
+          logoutBtn.style.display = (logoutBtn.style.display === 'none' || !logoutBtn.style.display) ? 'inline-block' : 'none';
+        });
+
+        logoutBtn?.addEventListener('click', async (e) => {
+          e.preventDefault();
+          try{ await supabase.auth.signOut(); showBanner('Wylogowano.', 'ok'); }
+          catch(err){ console.error('signOut error', err); showBanner('Błąd wylogowania', 'err', 4000); }
+          finally{
+            showOnly(sectionAuth);
+            authBox.innerHTML = '';
+            menuApp.classList.add('hidden'); 
+            menuAuth.classList.remove('hidden');
+            try{ localStorage.removeItem('lastSectionId'); }catch(_){}
+          }
+        });
+
+        const target = sections.find(s => '#' + s.id === lastSectionId) || sectionHome;
+        showOnly(target);
+        if (target === sectionHome) loadTodayTask();
+      } else {
+        authBox.innerHTML = '';
+        menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden');
+        showOnly(sectionAuth);
+      }
+    } catch(e){ console.error('refreshAuthUI error', e); }
+  }
+  supabase.auth.onAuthStateChange((_e, session) => refreshAuthUI(session));
+  supabase.auth.getSession().then(({ data }) => refreshAuthUI(data.session));
+
+  // ===== Rejestracja / Logowanie =====
+  const loginPhone = $('#loginPhone');
+  const loginPass  = $('#loginPass');
+  const loginBtn   = $('#loginBtn');
+  const loginErr   = $('#loginError');
+
+  const regPhone = $('#regPhone');
+  const regShift = $('#regShift');
+  const regPass  = $('#regPass');
+  const regPass2 = $('#regPass2');
+  const regBtn   = $('#registerBtn');
+  const regErr   = $('#regError');
+  const regOk    = $('#regOk');
+
+  const loginEmailPreview = $('#loginEmailPreview');
+  const regEmailPreview   = $('#regEmailPreview');
+  function updateEmailPreview(){
+    const ld = (loginPhone?.value||'').replace(/\D/g,''); if (loginEmailPreview) loginEmailPreview.textContent = ld ? phoneToEmail(ld) : '—';
+    const rd = (regPhone?.value||'').replace(/\D/g,'');  if (regEmailPreview)  regEmailPreview.textContent   = rd ? phoneToEmail(rd) : '—';
+  }
+  loginPhone?.addEventListener('input', updateEmailPreview);
+  regPhone?.addEventListener('input', updateEmailPreview);
+  updateEmailPreview();
+
+  regBtn?.addEventListener('click', async () => {
+    regErr.textContent = ''; regOk.style.display = 'none';
+    const digits = (regPhone.value||'').replace(/\D/g,'');
+    const shift  = regShift.value;
+    const pass   = regPass.value;
+    const pass2  = regPass2.value;
+    if (!digits){ regErr.textContent = 'Podaj numer telefonu.'; return; }
+    if (!shift){  regErr.textContent = 'Wybierz zmianę.'; return; }
+    if (!pass || pass.length < 6){ regErr.textContent = 'Hasło min. 6 znaków.'; return; }
+    if (pass !== pass2){ regErr.textContent = 'Hasła nie są takie same.'; return; }
+    const email = phoneToEmail(digits);
+    setBtnLoading(regBtn, true, 'Zarejestruj', 'Rejestracja...');
+    try{
+      const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { phone_digits: digits, shift } } });
+      if (error){ regErr.textContent = `(${error.status||'??'}) ${error.message}`; showBanner(`Rejestracja nieudana: ${error.message}`, 'err', 5000); return; }
+      regOk.textContent = 'Konto zostało utworzone, możesz się zalogować.'; regOk.style.display = 'block'; showBanner('Konto utworzone. Zaloguj się.', 'ok', 4000);
+    } catch(e){ regErr.textContent = e?.message || String(e); showBanner('Błąd krytyczny rejestracji', 'err', 5000);
+    } finally { setBtnLoading(regBtn, false, 'Zarejestruj', 'Rejestracja...'); }
+  });
+
+  // ===== Logowanie — po sukcesie HOME =====
+  loginBtn?.addEventListener('click', async () => {
+    loginErr.textContent = '';
+    const digits = (loginPhone.value||'').replace(/\D/g,''); const pass = loginPass.value;
+    if (!digits){ loginErr.textContent = 'Podaj numer telefonu.'; return; }
+    if (!pass){   loginErr.textContent = 'Podaj hasło.'; return; }
+    const email = phoneToEmail(digits);
+    setBtnLoading(loginBtn, true, 'Zaloguj', 'Logowanie...');
+    try{
+      const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+      if (error){ loginErr.textContent = `(${error.status||'??'}) ${error.message}`; showBanner('Błąd logowania: ' + (error.message||''), 'err', 5000); return; }
+      showBanner('Zalogowano.', 'ok', 2500);
+      showOnly(sectionHome); try{ localStorage.setItem('lastSectionId','#home'); }catch(_){}
+      loadTodayTask();
+    } catch(e){ loginErr.textContent = e?.message || String(e); showBanner('Błąd krytyczny logowania', 'err', 5000);
+    } finally { setBtnLoading(loginBtn, false, 'Zaloguj', 'Logowanie...'); }
+  });
+
+  // ====== FLEET ======
+  const fleetButtons = $('#fleetButtons');
+  const compartmentsBox = $('#compartments');
+  const actionsWrap = $('#actionsWrap');
+  const expandAllBtn = $('#expandAllBtn');
+  const sendShortagesBtn = $('#sendShortagesBtn');
+  let collapseAllBtn = null;
+
+  let currentVehicle = null, currentTable = null;
+  const selectedSet = new Set();       // {table|compartment|id}
+  const keyFor = (t,c,id)=>`${t}|${c}|${id}`;
+
+  async function fetchCompartmentsInTableOrder(table){
+    const { data, error } = await supabase.from(table).select('id, compartment').not('compartment','is',null).order('id',{ascending:true});
+    if (error) throw error;
+    const seen=new Set(), list=[]; for(const r of data||[]){ const c=r.compartment; if(c && !seen.has(c)){ seen.add(c); list.push({name:c}); } }
+    return list;
+  }
+  async function fetchEquip(table, compartment){
+    const { data, error } = await supabase.from(table).select('id, SPRZĘT, ILOŚĆ, compartment').eq('compartment',compartment).order('id',{ascending:true});
+    if (error) throw error; return data||[];
+  }
+  function showLoadingCompartments(){ compartmentsBox.style.display=''; compartmentsBox.innerHTML=''; for(let i=0;i<5;i++){ const s=document.createElement('div'); s.className='skeleton'; s.style.height='42px'; s.style.border='1px solid #000'; s.style.borderRadius='6px'; s.style.marginTop=i?'8px':'0'; compartmentsBox.appendChild(s);} }
+  function renderCompartments(list){
+    compartmentsBox.innerHTML=''; compartmentsBox.style.display='';
+    if(!list.length){ const empty=document.createElement('div'); empty.className='sub'; empty.textContent='Brak skrytek.'; compartmentsBox.appendChild(empty); return; }
+    list.forEach(({name})=>{
+      const wrap=document.createElement('div'); wrap.className='compartment-item';
+      const btn=document.createElement('button'); btn.className='btn compartment-btn'; btn.textContent=name; btn.setAttribute('data-compartment',name);
+      const slot=document.createElement('div'); slot.className='equip-slot'; slot.setAttribute('data-equip-slot',name); slot.dataset.open='false';
+      wrap.append(btn,slot); compartmentsBox.appendChild(wrap);
+    });
+    expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex';
+  }
+  function showLoadingEquipInSlot(slot){ slot.innerHTML=''; for(let i=0;i<4;i++){ const r=document.createElement('div'); r.className='skeleton'; r.style.height='44px'; r.style.marginTop='8px'; slot.appendChild(r); } }
+  function renderEquipInSlot(slot, rows, table, compartment){
+    slot.innerHTML=''; if(!rows.length){ slot.innerHTML='<div class="sub">Brak sprzętu w tej skrytce.</div>'; return; }
+    rows.forEach(r=>{ const row=document.createElement('div'); row.className='equip-row'; row.dataset.id=String(r.id); row.dataset.compartment=compartment;
+      if(selectedSet.has(keyFor(table,compartment,r.id))) row.classList.add('selected');
+      row.innerHTML=`<div class="equip-name">${r['SPRZĘT']}</div><div class="qty-badge">${r['ILOŚĆ']}</div>`;
+      slot.appendChild(row);
+    });
+  }
+  async function openCompartment(btn){
+    const slot=btn.nextElementSibling; if(!slot) return;
+    $$('#compartments .compartment-btn').forEach(b=>{ if(b!==btn) b.classList.remove('primary'); });
+    $$('#compartments .equip-slot').forEach(s=>{ if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; } });
+    if (slot.dataset.open==='true'){ slot.dataset.open='false'; slot.innerHTML=''; btn.classList.remove('primary'); return; }
+    const tableAtClick = currentTable;
+    btn.classList.add('primary'); slot.dataset.open='true'; showLoadingEquipInSlot(slot);
+    try{
+      const rows=await fetchEquip(tableAtClick, btn.getAttribute('data-compartment'));
+      if (currentTable !== tableAtClick) return;
+      renderEquipInSlot(slot, rows, tableAtClick, btn.getAttribute('data-compartment'));
+    } catch(err){ slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
+  }
+  fleetButtons?.addEventListener('click', async (e)=>{
+    const btn=e.target.closest('[data-vehicle]'); if(!btn) return;
+    $$('#fleetButtons .btn').forEach(b=>b.classList.remove('primary')); btn.classList.add('primary');
+    currentVehicle=btn.getAttribute('data-vehicle');
+    currentTable = vehicleToTableName(currentVehicle);
+    if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
+    compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments();
+    try{ const list=await fetchCompartmentsInTableOrder(currentTable); renderCompartments(list); }
+    catch(err){ compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`; }
+  });
+  compartmentsBox?.addEventListener('click', async (e)=>{
+    const btn=e.target.closest('.compartment-btn'); if(btn && currentTable) return openCompartment(btn);
+    const row=e.target.closest('.equip-row'); if(row){
+      const k=keyFor(currentTable,row.dataset.compartment,row.dataset.id);
+      row.classList.toggle('selected');
+      if(row.classList.contains('selected')) selectedSet.add(k); else selectedSet.delete(k);
+    }
+  });
+  expandAllBtn?.addEventListener('click', async ()=>{
+    if(!currentTable) return; const items=$$('#compartments .compartment-item');
+    const tableAtClick = currentTable;
+    await Promise.all(items.map(async item=>{
+      const b=item.querySelector('.compartment-btn'); const s=item.querySelector('.equip-slot');
+      if(s.dataset.open==='true' && s.children.length) return;
+      b.classList.add('primary'); s.dataset.open='true'; showLoadingEquipInSlot(s);
+      try{ const rows=await fetchEquip(tableAtClick, b.getAttribute('data-compartment'));
+        if (currentTable !== tableAtClick) return; renderEquipInSlot(s, rows, tableAtClick, b.getAttribute('data-compartment'));
+      } catch(err){ s.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
+    }));
+    if(!collapseAllBtn){
+      collapseAllBtn=document.createElement('button');
+      collapseAllBtn.className='btn'; collapseAllBtn.textContent='Zwiń wszystkie';
+      collapseAllBtn.style.marginTop='12px'; collapseAllBtn.style.width='100%';
+      collapseAllBtn.addEventListener('click',()=>{
+        $$('#compartments .equip-slot').forEach(s=>{ s.dataset.open='false'; s.innerHTML=''; });
+        $$('#compartments .compartment-btn').forEach(b=>b.classList.remove('primary'));
+        collapseAllBtn.remove(); collapseAllBtn=null;
+      });
+      compartmentsBox.appendChild(collapseAllBtn);
+    }
+  });
+
+  // ===== WYŚLIJ BRAKI -> INSERT do public.shortages =====
+  document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{
+    if(!currentVehicle || !currentTable) return;
+    const selectedKeys = [...selectedSet].filter(k => k.startsWith(currentTable + '|'));
+    if (!selectedKeys.length){ alert('Nie wybrano żadnych braków.'); return; }
+    const ids = selectedKeys.map(k => Number(k.split('|')[2])).filter(Number.isFinite);
+    const uniqueIds = [...new Set(ids)];
+    let equipById = new Map();
+    try{
+      const { data, error } = await supabase.from(currentTable).select('id, "SPRZĘT"').in('id', uniqueIds);
+      if (error) throw error;
+      (data||[]).forEach(r => equipById.set(Number(r.id), (r['SPRZĘT'] ?? '').toString()));
+    }catch(err){ showBanner('Błąd pobierania danych sprzętu.', 'err', 4000); return; }
+    const { data: udata } = await supabase.auth.getUser();
+    const userId = udata?.user?.id || null;
+    let shift = null, fullName = null;
+    try{
+      const { data: prof } = await supabase.from('profiles').select('shift, full_name').eq('user_id', userId).maybeSingle();
+      shift = prof?.shift || null; fullName = prof?.full_name || null;
+    }catch(e){}
+    const rows = uniqueIds.map(id => ({ 'SPRZĘT': equipById.get(id) || `ID ${id}`, 'WÓZ': currentVehicle, 'ZMIANA': shift, 'UŻYTKOWNIK': fullName, user_id: userId }));
+    try{
+      const { error } = await supabase.from('shortages').insert(rows);
+      if (error) throw error;
+      showBanner(`Wysłano braki: ${rows.length} wiersz(y).`, 'ok', 4000);
+      for (const k of [...selectedSet]) if (k.startsWith(currentTable + '|')) selectedSet.delete(k);
+      $$('#compartments .equip-row.selected').forEach(r => r.classList.remove('selected'));
+    }catch(err){ showBanner('Błąd zapisu braków.', 'err', 5000); }
+  });
+
+  /* ========= EKRAN BRAKI – pobieranie + filtry ========= */
+  const fltDateFrom = $('#fltDateFrom'), fltDateTo = $('#fltDateTo'), fltVehicle = $('#fltVehicle'), fltUser = $('#fltUser');
+  const btnSearch = $('#btnSearch'), tableBody = $('#shortagesTable tbody'), rowsInfo = $('#rowsInfo');
+  const pageInfo = $('#pageInfo'), btnPrev = $('#btnPrev'), btnNext = $('#btnNext');
+  let page = 1; const pageSize = 25; let lastRows = [];
+  function buildQuery(){
+    let q = supabase.from('shortages').select('"SPRZĘT","WÓZ","DATA","ZMIANA","UŻYTKOWNIK"', { count: 'exact' }).order('DATA', { ascending:false });
+    if (fltDateFrom.value){ q = q.gte('DATA', fltDateFrom.value + ' 00:00'); }
+    if (fltDateTo.value){   q = q.lte('DATA', fltDateTo.value + ' 23:59'); }
+    if (fltVehicle.value){  q = q.ilike('"WÓZ"', `%${fltVehicle.value}%`); }
+    if (fltUser.value){     q = q.ilike('"UŻYTKOWNIK"', `%${fltUser.value}%`); }
+    return q.range((page-1)*pageSize, page*pageSize - 1);
+  }
+  async function loadShortages(){
+    if (!document.body.contains(tableBody)) return;
+    tableBody.innerHTML = '<tr><td colspan="5">Ładowanie…</td></tr>';
+    try{
+      const { data, count, error } = await buildQuery();
+      if (error) throw error;
+      lastRows = data || [];
+      renderTable(lastRows);
+      rowsInfo.textContent = `Wyników: ${count ?? lastRows.length}`;
+      pageInfo.textContent = `Strona ${page}`;
+      btnPrev.disabled = page <= 1;
+      btnNext.disabled = (count ?? lastRows.length) <= page * pageSize;
+    }catch(e){
+      tableBody.innerHTML = '<tr><td colspan="5">Błąd pobierania.</td></tr>';
+    }
+  }
+  function renderTable(rows){
+    if (!rows.length){ tableBody.innerHTML = '<tr><td colspan="5">Brak danych.</td></tr>'; return; }
+    tableBody.innerHTML = '';
+    rows.forEach(r=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${(r['SPRZĘT']||'').toString()}</td>
+        <td>${(r['WÓZ']||'').toString()}</td>
+        <td>${formatDate(r['DATA'])}</td>
+        <td>${(r['ZMIANA']||'').toString()}</td>
+        <td>${(r['UŻYTKOWNIK']||'').toString()}</td>`;
+      tableBody.appendChild(tr);
+    });
+  }
+  btnSearch?.addEventListener('click', ()=>{ page=1; loadShortages(); });
+  btnPrev?.addEventListener('click', ()=>{ if(page>1){ page--; loadShortages(); } });
+  btnNext?.addEventListener('click', ()=>{ page++; loadShortages(); });
+
+  // ====== MENU: obsługa kliknięć ======
+  document.querySelector('a[href="#home"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionHome); loadTodayTask(); });
+  document.querySelector('a[href="#fleet"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionFleet); });
+  document.querySelector('a[href="#equip"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionEquip); });
+  document.querySelector('a[href="#knowledge"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionKnowledge); });
+  document.querySelector('#menuShortagesLink[data-nav]')?.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const { data: me } = await supabase.auth.getUser();
+    const canSee = await isViewer(me?.user?.id);
+    if (!canSee){ showBanner('Brak uprawnień do podglądu braków.', 'err', 3500); return; }
+    if (!document.getElementById('fltDateFrom').value && !document.getElementById('fltDateTo').value){
+      const d = new Date(); const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+      document.getElementById('fltDateFrom').value = `${y}-${m}-${dd}`;
+      document.getElementById('fltDateTo').value   = `${y}-${m}-${dd}`;
+    }
+    showOnly(sectionShort);
+    page = 1; loadShortages();
+  });
+
+  // ===== HOME: dzisiejsze zadanie (Europe/Warsaw) =====
+  const todayBox = document.getElementById('todayBox');
+  function getWarsawDow(){
+    const now = new Date();
+    const warsaw = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
+    const day = warsaw.getDay(); // 0=Nd..6=Sob
+    return day === 0 ? 7 : day;  // 1=Pon..7=Nd
+  }
+  async function loadTodayTask(){
+    if (!todayBox) return;
+    todayBox.innerHTML = '<div class="skeleton" style="height:92px"></div>';
+    const dow = getWarsawDow();
+    try{
+      const { data, error } = await supabase
+        .from('weekly_tasks')
+        .select('dow, day_name, tasks')
+        .eq('dow', dow)
+        .maybeSingle();
+      if (error) throw error;
+      renderToday(data);
+    }catch(e){
+      todayBox.innerHTML = '<div class="sub">Błąd pobierania zadania na dziś.</div>';
+    }
+  }
+  function renderToday(row){
+    const name = row?.day_name || 'Dziś';
+    const tasks = (row?.tasks || '').toString();
+    todayBox.innerHTML = `
+      <div class="today-card">
+        <h3>${name} — dziś</h3>
+        <div class="tasks">${tasks || 'Brak zadania na dziś.'}</div>
+      </div>`;
+  }
+  (function scheduleMidnightRefresh(){
+    const now = new Date();
+    const warsawNow = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
+    const midnight = new Date(warsawNow); midnight.setHours(24,0,0,0);
+    const ms = midnight - warsawNow;
+    setTimeout(()=>{ loadTodayTask(); scheduleMidnightRefresh(); }, Math.max(1000, ms));
+  })();
+
+  /* ===== SPRZĘT JRG — WYSZUKIWARKA SPRZĘTU ===== */
+  const equipQueryInput = document.getElementById('equipQuery');
+  const equipSearchBtn  = document.getElementById('equipSearchBtn');
+  const equipInfo       = document.getElementById('equipInfo');
+  const equipResultsBody= document.getElementById('equipResultsBody');
+
+  // podaj listę tabel (takie same jak w Listach Wozów)
+  const EQUIP_TABLES = [
+    '411_22','411_23','411_25','411_26','411_43','411_51','411_71','411_91',
+    '411_59','411_22_Tyl','411_23_Tyl'
+  ];
+
+  async function searchEquipmentGlobal(term){
+    const q = term.trim();
+    if (!q){ equipInfo.textContent = 'Wpisz nazwę sprzętu i kliknij „Szukaj”.'; equipResultsBody.innerHTML=''; return; }
+    equipInfo.textContent = 'Szukam…';
+    equipResultsBody.innerHTML = '<tr><td colspan="4">Ładowanie…</td></tr>';
+
+    const results = [];
+    // równoległe zapytania do wszystkich tabel
+    await Promise.all(EQUIP_TABLES.map(async (tbl) => {
+      const { data, error } = await supabase
+        .from(tbl)
+        .select('compartment, "SPRZĘT","ILOŚĆ"')
+        .ilike('"SPRZĘT"', `%${q}%`);
+      if (!error && data && data.length){
+        data.forEach(r => results.push({
+          item: (r['SPRZĘT']||'').toString(),
+          vehicle: tableToVehicleName(tbl),
+          compartment: (r.compartment||'').toString(),
+          qty: (r['ILOŚĆ']||'').toString()
+        }));
+      }
+    }));
+
+    // posortuj: po nazwie wozu, potem skrytce
+    results.sort((a,b)=> (a.vehicle.localeCompare(b.vehicle) || a.compartment.localeCompare(b.compartment) || a.item.localeCompare(b.item)));
+
+    // render
+    if (!results.length){
+      equipInfo.textContent = 'Brak wyników.';
+      equipResultsBody.innerHTML = '<tr><td colspan="4">Brak wyników.</td></tr>';
+      return;
+    }
+    equipInfo.textContent = `Znaleziono: ${results.length}`;
+    equipResultsBody.innerHTML = '';
+    results.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.item}</td><td>${r.vehicle}</td><td>${r.compartment}</td><td>${r.qty}</td>`;
+      equipResultsBody.appendChild(tr);
+    });
+  }
+
+  equipSearchBtn?.addEventListener('click', ()=> searchEquipmentGlobal(equipQueryInput.value));
+  equipQueryInput?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); searchEquipmentGlobal(equipQueryInput.value); } });
+
+</script>
+</body>
+</html>
