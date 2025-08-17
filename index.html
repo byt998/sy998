@@ -30,12 +30,12 @@
   .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
 
   .btn{
-    appearance:none; background:#fff; color:#000; border:1px solid var(--line);
-    padding:10px 12px; border-radius:6px; cursor:pointer;
+    appearance:none; background:#fff; color:#000; border:2px solid transparent;
+    padding:9px 12px; border-radius:6px; cursor:pointer;
     box-shadow:0 2px 0 #000; font-weight:700;
   }
-  .btn:hover{ background:#f6f6f6; }
-  .btn.primary{ background:#000; color:#fff; }
+  .btn:hover{ background:#f6f6f6; border-color:var(--line); }
+  .btn.primary{ background:#000; color:#fff; border-color:#000; }
   .btn.primary:hover{ background:#111; }
   .btn.block{ width:100%; }
   .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #000; }
