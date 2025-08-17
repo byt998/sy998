@@ -15,26 +15,45 @@
   header{ border-bottom:1px solid var(--line); background:#fff; position:sticky; top:0; z-index:10; }
   .nav{ display:flex; align-items:center; gap:var(--gap); padding:12px 0; }
   .nav ul{ margin-left:0; display:flex; gap:12px; list-style:none; padding:0; }
-  .nav a{ text-decoration:none; padding:8px 10px; border-radius:6px; }
+  .nav a{
+    text-decoration:none;
+    padding:8px 10px;
+    border-radius:6px;
+    font-weight:700; /* pogrubienie menu */
+  }
   .nav a:hover{ background:#f2f2f2; }
   .authbox{ margin-left:auto; display:flex; align-items:center; gap:8px; }
-  .user-badge{ border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:700; }
 
-.user-menu{ position:relative; display:inline-block; }
-.user-badge{ cursor:pointer; } /* dopisujemy tylko tę właściwość do istniejącego stylu */
-.logout-btn{
-  display:none;
-  position:absolute;
-  top:110%;
-  right:0;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:6px;
-  padding:8px 12px;
-  white-space:nowrap;
-  z-index:100;
-}
-.user-menu.open .logout-btn{ display:block; }
+  /* --- User menu w nagłówku --- */
+  .user-menu{ position:relative; display:inline-block; }
+  .user-badge{
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    background:#fff;
+    cursor:pointer;
+  }
+  .logout-btn{
+    display:none;
+    position:absolute;
+    top:110%;
+    right:0;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:8px 12px;
+    white-space:nowrap;
+    z-index:100;
+  }
+  .user-menu.open .logout-btn{ display:block; }
+
+  /* mobile: nie trzeba przewijać w bok, authbox spada pod menu */
+  @media (max-width:600px){
+    .nav{ flex-wrap:wrap; gap:8px; }
+    .nav ul{ flex-wrap:wrap; }
+    .authbox{ margin-left:0; margin-top:8px; }
+  }
 
   .banner{ position:fixed; left:50%; transform:translateX(-50%); top:8px; z-index:9999;
     padding:10px 14px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 2px 0 #000; font-weight:700; }
@@ -45,11 +64,10 @@
   .sub{ color:var(--muted); margin:.25rem 0 1rem; }
   .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
 
-  /* PRZYCISKI: stały border 1px (nie skacze), ten sam rozmiar w każdym stanie */
   .btn{
     appearance:none; background:#fff; color:#000; border:1px solid var(--line);
     padding:10px 12px; border-radius:6px; cursor:pointer;
-    box-shadow:0 2px 0 #000; font-weight:700; line-height:1.2;
+    box-shadow:0 2px 0 #000; font-weight:700;
   }
   .btn:hover{ background:#f6f6f6; }
   .btn.primary{ background:#000; color:#fff; border-color:#000; }
@@ -69,24 +87,14 @@
   .error{ color:var(--red); font-weight:700; min-height:1.2em; }
   .okline{ color:var(--green); font-weight:700; min-height:1.2em; }
 
-  /* ====== FLEET ====== */
   .fleet-top{ display:flex; justify-content:center; }
-  /* Kontener z przyciskami wozów — ZAWSZE statyczny */
-  .fleet-buttons{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:flex-start;
-  }
-  .fleet-buttons .btn[data-vehicle]{
-    white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis;
-    flex:0 0 auto; /* nie rozciągaj */
-  }
-
-  /* Panel akcji i skrytek — zawsze pod kontenerem przycisków (mobile + desktop) */
+  .fleet-buttons{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
   .actions-wrap{ display:none; justify-content:center; margin-top:12px; }
   .actions{ display:flex; gap:8px; flex-wrap:wrap; }
   .compartments-wrap{ display:flex; justify-content:center; margin-top:16px; }
   .compartments{ display:flex; flex-direction:column; gap:8px; width:var(--comp-width); max-width:100%; }
   .compartment-item{ width:100%; }
-  .btn.compartment-btn{ width:100%; text-align:center; } /* „KABINA”, itp. ma border 1px z .btn */
+  .btn.compartment-btn{ width:100%; text-align:center; }
 
   .equip-slot{ margin-top:8px; }
   .equip-row{
@@ -96,7 +104,6 @@
   .equip-row + .equip-row{ margin-top:8px; }
   .equip-name{ font-weight:700; }
   .qty-badge{ border:1px solid var(--line); border-radius:999px; padding:4px 10px; }
-
   .equip-row.selected{ color:var(--red); border-color:var(--red); }
   .equip-row.selected .qty-badge{ border-color:var(--red); }
 
@@ -109,18 +116,13 @@
   .hint{ font-size:.9rem; color:#222; }
   .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
 
-  /* HOME */
-  .today-card{ border:1px solid var(--line); border-radius:8px; padding:16px; background:#fff; box-shadow:0 2px 0 #000; }
-  .today-card h3{ margin:0 0 6px; font-size:1.1rem; }
-  .today-card .tasks{ white-space:pre-wrap; }
-
-  /* BRAKI: tabela */
-  #shortagesTable { width:100%; border-collapse:collapse; border:1px solid var(--line); }
-  #shortagesTable th,#shortagesTable td { border:1px solid var(--line); padding:8px 10px; text-align:center; }
-  #shortagesTable thead th { background:#f4f4f4; font-weight:700; }
+  /* BRAKI tabela */
+  #shortagesTable{ width:100%; border-collapse:collapse; border:1px solid var(--line); }
+  #shortagesTable th,#shortagesTable td{ border:1px solid var(--line); padding:8px 10px; text-align:center; }
+  #shortagesTable thead th{ background:#f4f4f4; font-weight:700; }
   #shortagesTable tbody tr:nth-child(even){ background:#f9f9f9; }
 
-  /* Sprzęt JRG — tabela wyników */
+  /* Sprzęt JRG tabela */
   #equipResultsTable{ width:100%; border-collapse:collapse; border:1px solid var(--line); margin-top:12px; }
   #equipResultsTable th,#equipResultsTable td{ border:1px solid var(--line); padding:8px 10px; text-align:center; }
   #equipResultsTable thead th{ background:#f4f4f4; font-weight:700; }
@@ -225,7 +227,6 @@
   <section id="fleet" class="hidden">
     <div class="wrap">
       <div class="card">
-        <!-- Kontener przycisków wozów -->
         <div class="fleet-top">
           <div id="fleetButtons" class="fleet-buttons">
             <button class="btn" data-vehicle="411-22">411-22</button>
@@ -242,7 +243,6 @@
           </div>
         </div>
 
-        <!-- STAŁY panel akcji + skrytek POD kontenerem przycisków -->
         <div class="actions-wrap" id="actionsWrap">
           <div class="actions">
             <button class="btn" id="expandAllBtn" disabled>Rozwiń wszystkie</button>
@@ -372,7 +372,6 @@
   const $  = (s, el=document) => el.querySelector(s);
   const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
 
-  const normalizePhone = v => (v||'').toString().replace(/\D/g,'');
   const phoneToEmail   = digits => `${digits}@phones.local`;
   const setBtnLoading  = (btn, on, idle, loading) => { btn.disabled = on; btn.textContent = on ? loading : idle; };
   const showBanner = (text, type='ok', ms=3000) => {
@@ -381,7 +380,7 @@
   };
   const formatDate = (v) => {
     if (!v) return '';
-    const d = new Date(v.replace(' ', 'T'));
+    const d = new Date((v || '').toString().replace(' ', 'T'));
     const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
     const hh = String(d.getHours()).padStart(2,'0'), mi = String(d.getMinutes()).padStart(2,'0');
     return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
@@ -422,7 +421,6 @@
 
   // Pamiętanie ostatniej sekcji
   let lastSectionId = localStorage.getItem('lastSectionId') || '#home';
-
   function showOnly(section){
     sections.forEach(s => s.classList.add('hidden'));
     section.classList.remove('hidden');
@@ -431,7 +429,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Uprawnienia do ekranu Braki
+  // ===== Uprawnienia do „Braki” =====
   async function isViewer(userId){
     if (!userId) return false;
     const { data } = await supabase.from('shortages_viewers').select('user_id').eq('user_id', userId).maybeSingle();
@@ -443,49 +441,39 @@
     try{
       if (session?.user){
         menuAuth.classList.add('hidden'); menuApp.classList.remove('hidden');
-    // pobierz imię i nazwisko użytkownika z tabeli profiles
-let fullName = "Użytkownik";
-try {
-  const { data: prof } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("user_id", session.user.id)
-    .maybeSingle();
-  if (prof?.full_name) fullName = prof.full_name;
-} catch(e){ console.warn("Brak profilu:", e); }
 
-// wstaw menu użytkownika: badge z imieniem+nazwiskiem + ukryty przycisk WYLOGUJ
-authBox.innerHTML = `
-  <div class="user-menu" id="userMenu">
-    <div class="user-badge">${fullName}</div>
-    <button type="button" class="logout-btn" id="logoutBtn">WYLOGUJ</button>
-  </div>
-`;
+        // pobierz imię i nazwisko z profiles; jeśli brak — pokaż „Użytkownik”
+        let fullName = 'Użytkownik';
+        try {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+          if (prof?.full_name) fullName = prof.full_name;
+        } catch(e){ console.warn('Brak profilu:', e); }
 
-// klik w imię+nazwisko: pokaż/ukryj przycisk WYLOGUJ
-const userMenu = document.getElementById("userMenu");
-userMenu.querySelector(".user-badge").addEventListener("click", () => {
-  userMenu.classList.toggle("open");
-});
-
-// wylogowanie
-document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  try {
-    await supabase.auth.signOut();
-    showBanner("Wylogowano.", "ok");
-  } catch (err) {
-    console.error("signOut error", err);
-    showBanner("Błąd wylogowania", "err", 4000);
-  } finally {
-    showOnly(sectionAuth);
-    authBox.innerHTML = "";
-    menuApp.classList.add("hidden");
-    menuAuth.classList.remove("hidden");
-    try { localStorage.removeItem("lastSectionId"); }catch(_){}
-  }
-});
-
+        authBox.innerHTML = `
+          <div class="user-menu" id="userMenu">
+            <div class="user-badge">${fullName}</div>
+            <button type="button" class="logout-btn" id="logoutBtn">WYLOGUJ</button>
+          </div>
+        `;
+        const userMenu = document.getElementById('userMenu');
+        userMenu.querySelector('.user-badge').addEventListener('click', () => {
+          userMenu.classList.toggle('open');
+        });
+        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+          e.preventDefault();
+          try{ await supabase.auth.signOut(); showBanner('Wylogowano.', 'ok'); }
+          catch(err){ console.error('signOut error', err); showBanner('Błąd wylogowania', 'err', 4000); }
+          finally{
+            showOnly(sectionAuth);
+            authBox.innerHTML = '';
+            menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden');
+            try{ localStorage.removeItem('lastSectionId'); }catch(_){}
+          }
+        });
 
         const target = sections.find(s => '#' + s.id === lastSectionId) || sectionHome;
         showOnly(target);
@@ -514,16 +502,6 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
   const regErr   = $('#regError');
   const regOk    = $('#regOk');
 
-  const loginEmailPreview = $('#loginEmailPreview');
-  const regEmailPreview   = $('#regEmailPreview');
-  function updateEmailPreview(){
-    const ld = (loginPhone?.value||'').replace(/\D/g,''); if (loginEmailPreview) loginEmailPreview.textContent = ld ? phoneToEmail(ld) : '—';
-    const rd = (regPhone?.value||'').replace(/\D/g,'');  if (regEmailPreview)  regEmailPreview.textContent   = rd ? phoneToEmail(rd) : '—';
-  }
-  loginPhone?.addEventListener('input', updateEmailPreview);
-  regPhone?.addEventListener('input', updateEmailPreview);
-  updateEmailPreview();
-
   regBtn?.addEventListener('click', async () => {
     regErr.textContent = ''; regOk.style.display = 'none';
     const digits = (regPhone.value||'').replace(/\D/g,'');
@@ -537,16 +515,25 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     const email = phoneToEmail(digits);
     setBtnLoading(regBtn, true, 'Zarejestruj', 'Rejestracja...');
     try{
-      const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { phone_digits: digits, shift } } });
+      const { error } = await supabase.auth.signUp({
+        email, password: pass,
+        options: { data: { phone_digits: digits, shift } }
+      });
       if (error){ regErr.textContent = `(${error.status||'??'}) ${error.message}`; showBanner(`Rejestracja nieudana: ${error.message}`, 'err', 5000); return; }
-      regOk.textContent = 'Konto zostało utworzone, możesz się zalogować.'; regOk.style.display = 'block'; showBanner('Konto utworzone. Zaloguj się.', 'ok', 4000);
-    } catch(e){ regErr.textContent = e?.message || String(e); showBanner('Błąd krytyczny rejestracji', 'err', 5000);
-    } finally { setBtnLoading(regBtn, false, 'Zarejestruj', 'Rejestracja...'); }
+      regOk.textContent = 'Konto zostało utworzone, możesz się zalogować.'; regOk.style.display = 'block';
+      showBanner('Konto utworzone. Zaloguj się.', 'ok', 4000);
+    } catch(e){
+      regErr.textContent = e?.message || String(e);
+      showBanner('Błąd krytyczny rejestracji', 'err', 5000);
+    } finally {
+      setBtnLoading(regBtn, false, 'Zarejestruj', 'Rejestracja...');
+    }
   });
 
   loginBtn?.addEventListener('click', async () => {
     loginErr.textContent = '';
-    const digits = (loginPhone.value||'').replace(/\D/g,''); const pass = loginPass.value;
+    const digits = (loginPhone.value||'').replace(/\D/g,'');
+    const pass = loginPass.value;
     if (!digits){ loginErr.textContent = 'Podaj numer telefonu.'; return; }
     if (!pass){   loginErr.textContent = 'Podaj hasło.'; return; }
     const email = phoneToEmail(digits);
@@ -557,8 +544,12 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
       showBanner('Zalogowano.', 'ok', 2500);
       showOnly(sectionHome); try{ localStorage.setItem('lastSectionId','#home'); }catch(_){}
       loadTodayTask();
-    } catch(e){ loginErr.textContent = e?.message || String(e); showBanner('Błąd krytyczny logowania', 'err', 5000);
-    } finally { setBtnLoading(loginBtn, false, 'Zaloguj', 'Logowanie...'); }
+    } catch(e){
+      loginErr.textContent = e?.message || String(e);
+      showBanner('Błąd krytyczny logowania', 'err', 5000);
+    } finally {
+      setBtnLoading(loginBtn, false, 'Zaloguj', 'Logowanie...');
+    }
   });
 
   // ====== FLEET ======
@@ -605,38 +596,24 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     });
   }
 
-  // Klik na PRZYCISK WOZU -> panel poniżej kontenera
   fleetButtons?.addEventListener('click', async (e)=>{
     const btn=e.target.closest('button.btn[data-vehicle]'); if(!btn) return;
-
-    // podświetl aktywny
     $$('#fleetButtons .btn[data-vehicle]').forEach(b=>b.classList.remove('primary'));
     btn.classList.add('primary');
-
     currentVehicle = btn.getAttribute('data-vehicle');
     currentTable   = vehicleToTableName(currentVehicle);
-
-    // wyczyść i pokaż skeleton w JEDNYM, głównym panelu
     if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
     compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments();
-    try{
-      const list=await fetchCompartmentsInTableOrder(currentTable);
-      renderCompartments(list, currentTable);
-    }catch(err){
-      compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
-    }
-
-    // przewiń łagodnie tak, by panel był widoczny (przyciski zostają na miejscu)
+    try{ const list=await fetchCompartmentsInTableOrder(currentTable); renderCompartments(list, currentTable); }
+    catch(err){ compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`; }
     document.getElementById('actionsWrap').scrollIntoView({behavior:'smooth', block:'start'});
   });
 
-  // Klik w skrytkę oraz wybór braków
   compartmentsBox?.addEventListener('click', async (e)=>{
     const cbtn = e.target.closest('.compartment-btn');
     if(cbtn && currentTable){
       const slot=cbtn.nextElementSibling;
       if (slot.dataset.open==='true'){ slot.dataset.open='false'; slot.innerHTML=''; cbtn.classList.remove('primary'); return; }
-      // zamknij inne
       $$('#compartments .equip-slot').forEach(s=>{ if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; } });
       $$('#compartments .compartment-btn').forEach(b=>{ if(b!==cbtn) b.classList.remove('primary'); });
       const tableAtClick = currentTable;
@@ -655,7 +632,6 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     }
   });
 
-  // Rozwiń wszystkie
   expandAllBtn?.addEventListener('click', async ()=>{
     if(!currentTable) return; const items=$$('#compartments .compartment-item');
     const tableAtClick = currentTable;
@@ -680,10 +656,8 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     }
   });
 
-  // WYŚLIJ BRAKI
   document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{ await sendShortagesForCurrent(); });
 
-  // Zapis braków (wspólny)
   async function sendShortagesForCurrent(){
     if(!currentVehicle || !currentTable) return;
     const selectedKeys = [...selectedSet].filter(k => k.startsWith(currentTable + '|'));
@@ -779,12 +753,12 @@ document.getElementById("logoutBtn").addEventListener("click", async (e) => {
     page = 1; loadShortages();
   });
 
-  // ===== HOME: dzisiejsze zadanie =====
+  // ===== HOME: dzisiejsze zadanie (Europe/Warsaw) =====
   const todayBox = document.getElementById('todayBox');
   function getWarsawDow(){
     const now = new Date();
     const warsaw = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
-    const day = warsaw.getDay();
+    const day = warsaw.getDay(); // 0=Nd..6=Sob
     return day === 0 ? 7 : day;  // 1=Pon..7=Nd
   }
   async function loadTodayTask(){
