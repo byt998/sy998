@@ -29,16 +29,19 @@
   .sub{ color:var(--muted); margin:.25rem 0 1rem; }
   .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
 
+  /* PRZYCISKI — stały border 1px, bez zmiany wymiarów między stanami */
   .btn{
-    appearance:none; background:#fff; color:#000; border:2px solid transparent;
-    padding:9px 12px; border-radius:6px; cursor:pointer;
-    box-shadow:0 2px 0 #000; font-weight:700;
+    appearance:none; background:#fff; color:#000; border:1px solid var(--line);
+    padding:10px 12px; border-radius:6px; cursor:pointer;
+    box-shadow:0 2px 0 #000; font-weight:700; line-height:1.2;
   }
-  .btn:hover{ background:#f6f6f6; border-color:var(--line); }
+  .btn:hover{ background:#f6f6f6; }
   .btn.primary{ background:#000; color:#fff; border-color:#000; }
   .btn.primary:hover{ background:#111; }
   .btn.block{ width:100%; }
   .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #000; }
+  /* przyciski wozów — nie zawijają się w środku, nie rozszerzają layoutu */
+  .fleet-buttons .btn[data-vehicle]{ white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 
   .form-grid{ display:grid; gap:10px; }
   .field{ display:grid; gap:6px; }
@@ -54,13 +57,17 @@
 
   .fleet-top{ display:flex; justify-content:center; }
   .fleet-buttons{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:flex-start;
   }
 
-  /* Kafelek wozu, zawiera przycisk i (na mobile) panel inline */
+  /* Kafelek wozu, zawiera przycisk i (na mobile) panel overlay pod przyciskiem */
   .vehicle-tile{
     display:flex; flex-direction:column; gap:8px; align-items:stretch;
+    position:relative; /* kotwica dla overlay */
+    flex:0 0 auto;
   }
+
+  /* Domyślne pudełko na skrytki (używane jako overlay na mobile) */
   .inline-slot{
     border:1px solid var(--line);
     border-radius:8px;
@@ -69,9 +76,26 @@
     max-width:100%;
     background:#fff;
   }
-  /* Na desktopie nie pokazujemy panelu inline */
-  @media (min-width:768px){
-    .inline-slot{ display:none !important; }
+
+  /* === MOBILE overlay === */
+  @media (max-width:767.98px){
+    /* ukrywamy globalny panel skrytek/akcji, bo używamy panelu overlay w kafelku */
+    .actions-wrap, .compartments-wrap{ display:none !important; }
+
+    /* panel jest poza normalnym układem — nie przepycha innych przycisków */
+    .vehicle-tile .inline-slot[hidden]{ display:none !important; }
+    .vehicle-tile .inline-slot:not([hidden]){
+      position:absolute;
+      top: calc(100% + 8px);   /* tuż pod przyciskiem */
+      left:0; right:0;         /* dopasowanie do szerokości kafelka */
+      z-index:20;
+      max-height:70vh;         /* przewijanie w środku, nie rozpycha strony */
+      overflow:auto;
+      width: min(var(--comp-width), 100vw - 24px); /* nie wyjdzie poza ekran */
+      margin-inline: auto;
+      /* lekkie cieniowanie dla czytelności overlay */
+      box-shadow:0 6px 0 #000;
+    }
   }
 
   .actions-wrap{ display:none; justify-content:center; margin-top:12px; }
@@ -137,11 +161,6 @@
   }
   #equipResultsTable thead th{ background:#f4f4f4; font-weight:700; }
   #equipResultsTable tbody tr:nth-child(even){ background:#f9f9f9; }
-
-  /* Na mobile ukrywamy globalny panel skrytek/akcji, bo używamy panelu inline */
-  @media (max-width:767.98px){
-    .actions-wrap, .compartments-wrap{ display:none !important; }
-  }
 </style>
 </head>
 <body>
@@ -187,12 +206,10 @@
           <!-- LOGIN -->
           <div>
             <h2>Logowanie</h2>
-            
             <div class="form-grid">
               <div class="field">
                 <label for="loginPhone">Telefon</label>
                 <input id="loginPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
-                
               </div>
               <div class="field">
                 <label for="loginPass">Hasło</label>
@@ -206,12 +223,10 @@
           <!-- REGISTER -->
           <div>
             <h2>Rejestracja</h2>
-            
             <div class="form-grid">
               <div class="field">
                 <label for="regPhone">Telefon</label>
                 <input id="regPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
-                
               </div>
               <div class="field">
                 <label for="regShift">Zmiana</label>
@@ -248,7 +263,7 @@
       <div class="card">
         <div class="fleet-top">
           <div id="fleetButtons" class="fleet-buttons">
-            <!-- Każdy przycisk w kafelku z miejscem na panel inline (mobile) -->
+            <!-- Każdy przycisk w kafelku z miejscem na panel overlay (mobile) -->
             <div class="vehicle-tile" data-vehicle="411-22">
               <button class="btn" data-vehicle="411-22">411-22</button>
               <div class="inline-slot" hidden></div>
@@ -429,10 +444,10 @@
   const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
 
   const normalizePhone = v => (v||'').toString().replace(/\D/g,'');
-  const phoneToEmail   = digits => `${digits}@phones.local`;
+  const phoneToEmail   = digits => \`\${digits}@phones.local\`;
   const setBtnLoading  = (btn, on, idle, loading) => { btn.disabled = on; btn.textContent = on ? loading : idle; };
   const showBanner = (text, type='ok', ms=3000) => {
-    const b = $('#banner'); b.textContent = text; b.className = `banner ${type}`; b.classList.remove('hidden');
+    const b = $('#banner'); b.textContent = text; b.className = \`banner \${type}\`; b.classList.remove('hidden');
     clearTimeout(showBanner._t); showBanner._t = setTimeout(()=>b.classList.add('hidden'), ms);
   };
   const formatDate = (v) => {
@@ -440,10 +455,10 @@
     const d = new Date(v.replace(' ', 'T'));
     const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
     const hh = String(d.getHours()).padStart(2,'0'), mi = String(d.getMinutes()).padStart(2,'0');
-    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+    return \`\${yyyy}-\${mm}-\${dd} \${hh}:\${mi}\`;
   };
   function vehicleToTableName(vehicle){
-    let t = vehicle.replace(/\s+/g,'_').replaceAll('-','_');
+    let t = vehicle.replace(/\\s+/g,'_').replaceAll('-','_');
     const map = {'ł':'l','Ł':'L','ą':'a','Ą':'A','ć':'c','Ć':'C','ę':'e','Ę':'E','ń':'n','Ń':'N','ó':'o','Ó':'O','ś':'s','Ś':'S','ź':'z','Ź':'Z','ż':'z','Ż':'Z'};
     t = t.replace(/./g, ch => map[ch] || ch);
     return t;
@@ -451,8 +466,8 @@
   function tableToVehicleName(table){
     // odwrotność powyższego: "411_22_Tyl" -> "411-22 Tył"
     let v = table.replaceAll('_',' ');
-    v = v.replace(/^(\d{3}) (\d{2})/, (_,a,b)=>`${a}-${b}`);
-    v = v.replace(/Tyl\b/,'Tył');
+    v = v.replace(/^(\\d{3}) (\\d{2})/, (_,a,b)=>\`\${a}-\${b}\`);
+    v = v.replace(/Tyl\\b/,'Tył');
     return v;
   }
 
@@ -600,7 +615,7 @@
 
   let currentVehicle = null, currentTable = null;
   const selectedSet = new Set();       // {table|compartment|id}
-  const keyFor = (t,c,id)=>`${t}|${c}|${id}`;
+  const keyFor = (t,c,id)=>\`\${t}|\${c}|\${id}\`;
 
   async function fetchCompartmentsInTableOrder(table){
     const { data, error } = await supabase.from(table).select('id, compartment').not('compartment','is',null).order('id',{ascending:true});
@@ -628,7 +643,7 @@
     slot.innerHTML=''; if(!rows.length){ slot.innerHTML='<div class="sub">Brak sprzętu w tej skrytce.</div>'; return; }
     rows.forEach(r=>{ const row=document.createElement('div'); row.className='equip-row'; row.dataset.id=String(r.id); row.dataset.compartment=compartment; row.dataset.table=table;
       if(selectedSet.has(keyFor(table,compartment,r.id))) row.classList.add('selected');
-      row.innerHTML=`<div class="equip-name">${r['SPRZĘT']}</div><div class="qty-badge">${r['ILOŚĆ']}</div>`;
+      row.innerHTML=\`<div class="equip-name">\${r['SPRZĘT']}</div><div class="qty-badge">\${r['ILOŚĆ']}</div>\`;
       slot.appendChild(row);
     });
   }
@@ -648,7 +663,7 @@
     } catch(err){ slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
   }
 
-  // Klik na polu przycisku wozu
+  // Klik na przycisk wozu
   fleetButtons?.addEventListener('click', async (e)=>{
     const btn=e.target.closest('button.btn[data-vehicle]'); if(!btn) return;
     const tile = btn.closest('.vehicle-tile');
@@ -668,11 +683,11 @@
       compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments(compartmentsBox);
       try{ const list=await fetchCompartmentsInTableOrder(currentTable); renderCompartments(compartmentsBox, list, currentTable); expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex'; }
       catch(err){ compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`; }
-      // zamknij wszystkie panele inline (na wszelki wypadek)
+      // zamknij wszystkie panele overlay (na wszelki wypadek)
       $$('#fleetButtons .inline-slot').forEach(s=>{ s.hidden = true; s.innerHTML=''; });
     } else {
-      // ===== MOBILE: panel inline w kafelku
-      // zamknij inne inline-sloty
+      // ===== MOBILE: panel overlay w kafelku
+      // zamknij inne overlaye
       $$('#fleetButtons .inline-slot').forEach(s=>{ if(s!==tile.querySelector('.inline-slot')){ s.hidden = true; s.innerHTML=''; } });
       const slot = tile.querySelector('.inline-slot');
       if (!slot) return;
@@ -693,8 +708,8 @@
       }catch(err){
         localBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
       }
-      // przewiń do odsłoniętego panelu
-      slot.scrollIntoView({ behavior:'smooth', block:'start' });
+      // przewiń tylko jeśli panel nie jest na ekranie
+      slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
   });
 
@@ -736,9 +751,9 @@
   // Desktop: WYŚLIJ BRAKI
   document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{ await sendShortagesForCurrent(); });
 
-  // ===== MOBILE: delegacja zdarzeń wewnątrz panelu inline (akcje, skrytki, wybór braków) =====
+  // ===== MOBILE: delegacja zdarzeń wewnątrz overlay (akcje, skrytki, wybór braków) =====
   fleetButtons?.addEventListener('click', async (e)=>{
-    const slot = e.target.closest('.inline-slot'); // klik wewnątrz otwartego panelu
+    const slot = e.target.closest('.inline-slot'); // klik wewnątrz otwartego overlay
     if(!slot) return;
 
     // klik akcji
@@ -770,7 +785,7 @@
       if (s.dataset.open === 'true'){
         s.dataset.open = 'false'; s.innerHTML = ''; cbtn.classList.remove('primary'); return;
       }
-      // zamknij inne skrytki tylko w tym panelu
+      // zamknij inne skrytki tylko w tym overlay
       $$('.equip-slot', slot).forEach(x=>{ if(x!==s){ x.dataset.open='false'; x.innerHTML=''; }});
       $$('.compartment-btn', slot).forEach(b=>{ if(b!==cbtn){ b.classList.remove('primary'); }});
 
@@ -835,8 +850,8 @@
     let q = supabase.from('shortages').select('"SPRZĘT","WÓZ","DATA","ZMIANA","UŻYTKOWNIK"', { count: 'exact' }).order('DATA', { ascending:false });
     if (fltDateFrom.value){ q = q.gte('DATA', fltDateFrom.value + ' 00:00'); }
     if (fltDateTo.value){   q = q.lte('DATA', fltDateTo.value + ' 23:59'); }
-    if (fltVehicle.value){  q = q.ilike('"WÓZ"', `%${fltVehicle.value}%`); }
-    if (fltUser.value){     q = q.ilike('"UŻYTKOWNIK"', `%${fltUser.value}%`); }
+    if (fltVehicle.value){  q = q.ilike('"WÓZ"', \`%\${fltVehicle.value}%\`); }
+    if (fltUser.value){     q = q.ilike('"UŻYTKOWNIK"', \`%\${fltUser.value}%\`); }
     return q.range((page-1)*pageSize, page*pageSize - 1);
   }
   async function loadShortages(){
@@ -847,8 +862,8 @@
       if (error) throw error;
       lastRows = data || [];
       renderTable(lastRows);
-      rowsInfo.textContent = `Wyników: ${count ?? lastRows.length}`;
-      pageInfo.textContent = `Strona ${page}`;
+      rowsInfo.textContent = \`Wyników: \${count ?? lastRows.length}\`;
+      pageInfo.textContent = \`Strona \${page}\`;
       btnPrev.disabled = page <= 1;
       btnNext.disabled = (count ?? lastRows.length) <= page * pageSize;
     }catch(e){
@@ -885,8 +900,8 @@
     if (!canSee){ showBanner('Brak uprawnień do podglądu braków.', 'err', 3500); return; }
     if (!document.getElementById('fltDateFrom').value && !document.getElementById('fltDateTo').value){
       const d = new Date(); const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
-      document.getElementById('fltDateFrom').value = `${y}-${m}-${dd}`;
-      document.getElementById('fltDateTo').value   = `${y}-${m}-${dd}`;
+      document.getElementById('fltDateFrom').value = \`\${y}-\${m}-\${dd}\`;
+      document.getElementById('fltDateTo').value   = \`\${y}-\${m}-\${dd}\`;
     }
     showOnly(sectionShort);
     page = 1; loadShortages();
@@ -957,7 +972,7 @@
       const { data, error } = await supabase
         .from(tbl)
         .select('compartment, "SPRZĘT","ILOŚĆ"')
-        .ilike('"SPRZĘT"', `%${q}%`);
+        .ilike('"SPRZĘT"', \`%\${q}%\`);
       if (!error && data && data.length){
         data.forEach(r => results.push({
           item: (r['SPRZĘT']||'').toString(),
@@ -977,7 +992,7 @@
       equipResultsBody.innerHTML = '<tr><td colspan="4">Brak wyników.</td></tr>';
       return;
     }
-    equipInfo.textContent = `Znaleziono: ${results.length}`;
+    equipInfo.textContent = \`Znaleziono: \${results.length}\`;
     equipResultsBody.innerHTML = '';
     results.forEach(r => {
       const tr = document.createElement('tr');
