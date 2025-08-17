@@ -20,6 +20,22 @@
   .authbox{ margin-left:auto; display:flex; align-items:center; gap:8px; }
   .user-badge{ border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:700; }
 
+.user-menu{ position:relative; display:inline-block; }
+.user-badge{ cursor:pointer; } /* dopisujemy tylko tę właściwość do istniejącego stylu */
+.logout-btn{
+  display:none;
+  position:absolute;
+  top:110%;
+  right:0;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:8px 12px;
+  white-space:nowrap;
+  z-index:100;
+}
+.user-menu.open .logout-btn{ display:block; }
+
   .banner{ position:fixed; left:50%; transform:translateX(-50%); top:8px; z-index:9999;
     padding:10px 14px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 2px 0 #000; font-weight:700; }
   .banner.ok{ color:var(--green); border-color:var(--green); }
@@ -427,18 +443,49 @@
     try{
       if (session?.user){
         menuAuth.classList.add('hidden'); menuApp.classList.remove('hidden');
-        authBox.innerHTML = `<span class="user-badge">Zalogowano</span> <button type="button" class="btn" id="logoutBtn">Wyloguj</button>`;
-        $('#logoutBtn')?.addEventListener('click', async (e) => {
-          e.preventDefault();
-          try{ await supabase.auth.signOut(); showBanner('Wylogowano.', 'ok'); }
-          catch(err){ console.error('signOut error', err); showBanner('Błąd wylogowania', 'err', 4000); }
-          finally{
-            showOnly(sectionAuth);
-            authBox.innerHTML = '';
-            menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden');
-            try{ localStorage.removeItem('lastSectionId'); }catch(_){}
-          }
-        });
+    // pobierz imię i nazwisko użytkownika z tabeli profiles
+let fullName = "Użytkownik";
+try {
+  const { data: prof } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("user_id", session.user.id)
+    .maybeSingle();
+  if (prof?.full_name) fullName = prof.full_name;
+} catch(e){ console.warn("Brak profilu:", e); }
+
+// wstaw menu użytkownika: badge z imieniem+nazwiskiem + ukryty przycisk WYLOGUJ
+authBox.innerHTML = `
+  <div class="user-menu" id="userMenu">
+    <div class="user-badge">${fullName}</div>
+    <button type="button" class="logout-btn" id="logoutBtn">WYLOGUJ</button>
+  </div>
+`;
+
+// klik w imię+nazwisko: pokaż/ukryj przycisk WYLOGUJ
+const userMenu = document.getElementById("userMenu");
+userMenu.querySelector(".user-badge").addEventListener("click", () => {
+  userMenu.classList.toggle("open");
+});
+
+// wylogowanie
+document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
+  try {
+    await supabase.auth.signOut();
+    showBanner("Wylogowano.", "ok");
+  } catch (err) {
+    console.error("signOut error", err);
+    showBanner("Błąd wylogowania", "err", 4000);
+  } finally {
+    showOnly(sectionAuth);
+    authBox.innerHTML = "";
+    menuApp.classList.add("hidden");
+    menuAuth.classList.remove("hidden");
+    try { localStorage.removeItem("lastSectionId"); }catch(_){}
+  }
+});
+
 
         const target = sections.find(s => '#' + s.id === lastSectionId) || sectionHome;
         showOnly(target);
