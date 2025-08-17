@@ -29,7 +29,7 @@
   .sub{ color:var(--muted); margin:.25rem 0 1rem; }
   .card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:#fff; }
 
-  /* PRZYCISKI — stały border 1px (nie znika), bez zmiany wymiarów między stanami */
+  /* PRZYCISKI: stały border 1px (nie skacze), ten sam rozmiar w każdym stanie */
   .btn{
     appearance:none; background:#fff; color:#000; border:1px solid var(--line);
     padding:10px 12px; border-radius:6px; cursor:pointer;
@@ -40,8 +40,6 @@
   .btn.primary:hover{ background:#111; }
   .btn.block{ width:100%; }
   .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #000; }
-  /* przyciski wozów — nie rozszerzają layoutu, ucinamy z elipsą gdy za długie */
-  .fleet-buttons .btn[data-vehicle]{ white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 
   .form-grid{ display:grid; gap:10px; }
   .field{ display:grid; gap:6px; }
@@ -55,55 +53,24 @@
   .error{ color:var(--red); font-weight:700; min-height:1.2em; }
   .okline{ color:var(--green); font-weight:700; min-height:1.2em; }
 
+  /* ====== FLEET ====== */
   .fleet-top{ display:flex; justify-content:center; }
+  /* Kontener z przyciskami wozów — ZAWSZE statyczny */
   .fleet-buttons{
     display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:flex-start;
   }
-
-  /* Kafelek wozu (anchor dla overlay) */
-  .vehicle-tile{
-    display:flex; flex-direction:column; gap:8px; align-items:stretch;
-    position:relative;
-    flex:0 0 auto;
+  .fleet-buttons .btn[data-vehicle]{
+    white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis;
+    flex:0 0 auto; /* nie rozciągaj */
   }
 
-  /* Pudełko na skrytki (overlay na mobile) */
-  .inline-slot{
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:12px;
-    width:var(--comp-width);
-    max-width:100%;
-    background:#fff;
-  }
-
-  /* === MOBILE overlay === */
-  @media (max-width:767.98px){
-    /* ukrywamy globalny panel skrytek/akcji na mobile */
-    .actions-wrap, .compartments-wrap{ display:none !important; }
-
-    /* overlay nie przepycha przycisków i nie wychodzi poza ekran */
-    .vehicle-tile .inline-slot[hidden]{ display:none !important; }
-    .vehicle-tile .inline-slot:not([hidden]){
-      position:absolute;
-      top: calc(100% + 8px);
-      left:0; right:0;
-      z-index:20;
-      max-height:70vh;
-      overflow:auto;
-      width: min(var(--comp-width), 100vw - 24px);
-      margin-inline:auto;
-      box-shadow:0 6px 0 #000;
-    }
-  }
-
+  /* Panel akcji i skrytek — zawsze pod kontenerem przycisków (mobile + desktop) */
   .actions-wrap{ display:none; justify-content:center; margin-top:12px; }
   .actions{ display:flex; gap:8px; flex-wrap:wrap; }
-
   .compartments-wrap{ display:flex; justify-content:center; margin-top:16px; }
   .compartments{ display:flex; flex-direction:column; gap:8px; width:var(--comp-width); max-width:100%; }
   .compartment-item{ width:100%; }
-  .btn.compartment-btn{ width:100%; text-align:center; }
+  .btn.compartment-btn{ width:100%; text-align:center; } /* „KABINA”, itp. ma border 1px z .btn */
 
   .equip-slot{ margin-top:8px; }
   .equip-row{
@@ -179,7 +146,7 @@
     </div>
   </section>
 
-  <!-- AUTH (przywrócone 1:1) -->
+  <!-- AUTH -->
   <section id="auth">
     <div class="wrap">
       <div class="card" id="authCard">
@@ -242,57 +209,24 @@
   <section id="fleet" class="hidden">
     <div class="wrap">
       <div class="card">
+        <!-- Kontener przycisków wozów -->
         <div class="fleet-top">
           <div id="fleetButtons" class="fleet-buttons">
-            <!-- Kafelki z overlay (mobile) -->
-            <div class="vehicle-tile" data-vehicle="411-22">
-              <button class="btn" data-vehicle="411-22">411-22</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-23">
-              <button class="btn" data-vehicle="411-23">411-23</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-25">
-              <button class="btn" data-vehicle="411-25">411-25</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-26">
-              <button class="btn" data-vehicle="411-26">411-26</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-43">
-              <button class="btn" data-vehicle="411-43">411-43</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-51">
-              <button class="btn" data-vehicle="411-51">411-51</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-71">
-              <button class="btn" data-vehicle="411-71">411-71</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-91">
-              <button class="btn" data-vehicle="411-91">411-91</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-59">
-              <button class="btn" data-vehicle="411-59">411-59</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-22 Tył">
-              <button class="btn" data-vehicle="411-22 Tył">411-22 Tył</button>
-              <div class="inline-slot" hidden></div>
-            </div>
-            <div class="vehicle-tile" data-vehicle="411-23 Tył">
-              <button class="btn" data-vehicle="411-23 Tył">411-23 Tył</button>
-              <div class="inline-slot" hidden></div>
-            </div>
+            <button class="btn" data-vehicle="411-22">411-22</button>
+            <button class="btn" data-vehicle="411-23">411-23</button>
+            <button class="btn" data-vehicle="411-25">411-25</button>
+            <button class="btn" data-vehicle="411-26">411-26</button>
+            <button class="btn" data-vehicle="411-43">411-43</button>
+            <button class="btn" data-vehicle="411-51">411-51</button>
+            <button class="btn" data-vehicle="411-71">411-71</button>
+            <button class="btn" data-vehicle="411-91">411-91</button>
+            <button class="btn" data-vehicle="411-59">411-59</button>
+            <button class="btn" data-vehicle="411-22 Tył">411-22 Tył</button>
+            <button class="btn" data-vehicle="411-23 Tył">411-23 Tył</button>
           </div>
         </div>
 
-        <!-- Globalne akcje + skrytki dla DESKTOP -->
+        <!-- STAŁY panel akcji + skrytek POD kontenerem przycisków -->
         <div class="actions-wrap" id="actionsWrap">
           <div class="actions">
             <button class="btn" id="expandAllBtn" disabled>Rozwiń wszystkie</button>
@@ -488,7 +422,7 @@
     return !!data;
   }
 
-  // ===== Auth UI (przywrócone) =====
+  // ===== Auth UI =====
   async function refreshAuthUI(session){
     try{
       if (session?.user){
@@ -519,7 +453,7 @@
   supabase.auth.onAuthStateChange((_e, session) => refreshAuthUI(session));
   supabase.auth.getSession().then(({ data }) => refreshAuthUI(data.session));
 
-  // ===== Rejestracja / Logowanie (przywrócone) =====
+  // ===== Rejestracja / Logowanie =====
   const loginPhone = $('#loginPhone');
   const loginPass  = $('#loginPass');
   const loginBtn   = $('#loginBtn');
@@ -580,18 +514,16 @@
     } finally { setBtnLoading(loginBtn, false, 'Zaloguj', 'Logowanie...'); }
   });
 
-  // ====== FLEET wspólne ======
-  const mqDesktop = window.matchMedia('(min-width: 768px)');
-
+  // ====== FLEET ======
   const fleetButtons = $('#fleetButtons');
-  const compartmentsBox = $('#compartments'); // desktop
+  const compartmentsBox = $('#compartments');
   const actionsWrap = $('#actionsWrap');
   const expandAllBtn = $('#expandAllBtn');
   const sendShortagesBtn = $('#sendShortagesBtn');
   let collapseAllBtn = null;
 
   let currentVehicle = null, currentTable = null;
-  const selectedSet = new Set();
+  const selectedSet = new Set();       // {table|compartment|id}
   const keyFor = (t,c,id)=>`${t}|${c}|${id}`;
 
   async function fetchCompartmentsInTableOrder(table){
@@ -604,16 +536,17 @@
     const { data, error } = await supabase.from(table).select('id, SPRZĘT, ILOŚĆ, compartment').eq('compartment',compartment).order('id',{ascending:true});
     if (error) throw error; return data||[];
   }
-  function showLoadingCompartments(targetBox){ targetBox.style.display=''; targetBox.innerHTML=''; for(let i=0;i<5;i++){ const s=document.createElement('div'); s.className='skeleton'; s.style.height='42px'; s.style.border='1px solid #000'; s.style.borderRadius='6px'; s.style.marginTop=i?'8px':'0'; targetBox.appendChild(s);} }
-  function renderCompartments(targetBox, list, table){
-    targetBox.innerHTML=''; targetBox.style.display='';
-    if(!list.length){ const empty=document.createElement('div'); empty.className='sub'; empty.textContent='Brak skrytek.'; targetBox.appendChild(empty); return; }
+  function showLoadingCompartments(){ compartmentsBox.style.display=''; compartmentsBox.innerHTML=''; for(let i=0;i<5;i++){ const s=document.createElement('div'); s.className='skeleton'; s.style.height='42px'; s.style.border='1px solid #000'; s.style.borderRadius='6px'; s.style.marginTop=i?'8px':'0'; compartmentsBox.appendChild(s);} }
+  function renderCompartments(list, table){
+    compartmentsBox.innerHTML=''; compartmentsBox.style.display='';
+    if(!list.length){ const empty=document.createElement('div'); empty.className='sub'; empty.textContent='Brak skrytek.'; compartmentsBox.appendChild(empty); return; }
     list.forEach(({name})=>{
       const wrap=document.createElement('div'); wrap.className='compartment-item';
       const btn=document.createElement('button'); btn.className='btn compartment-btn'; btn.textContent=name; btn.setAttribute('data-compartment',name); btn.setAttribute('data-table', table);
       const slot=document.createElement('div'); slot.className='equip-slot'; slot.setAttribute('data-equip-slot',name); slot.dataset.open='false';
-      wrap.append(btn,slot); targetBox.appendChild(wrap);
+      wrap.append(btn,slot); compartmentsBox.appendChild(wrap);
     });
+    expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex';
   }
   function showLoadingEquipInSlot(slot){ slot.innerHTML=''; for(let i=0;i<4;i++){ const r=document.createElement('div'); r.className='skeleton'; r.style.height='44px'; r.style.marginTop='8px'; slot.appendChild(r); } }
   function renderEquipInSlot(slot, rows, table, compartment){
@@ -625,78 +558,49 @@
     });
   }
 
-  // ====== DESKTOP flow ======
-  async function openCompartmentDesktop(btn){
-    const slot=btn.nextElementSibling; if(!slot) return;
-    $$('#compartments .compartment-btn').forEach(b=>{ if(b!==btn) b.classList.remove('primary'); });
-    $$('#compartments .equip-slot').forEach(s=>{ if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; } });
-    if (slot.dataset.open==='true'){ slot.dataset.open='false'; slot.innerHTML=''; btn.classList.remove('primary'); return; }
-    const tableAtClick = currentTable;
-    btn.classList.add('primary'); slot.dataset.open='true'; showLoadingEquipInSlot(slot);
-    try{
-      const rows=await fetchEquip(tableAtClick, btn.getAttribute('data-compartment'));
-      if (currentTable !== tableAtClick) return;
-      renderEquipInSlot(slot, rows, tableAtClick, btn.getAttribute('data-compartment'));
-    } catch(err){ slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
-  }
-
-  // Klik na przycisk wozu
+  // Klik na PRZYCISK WOZU -> panel poniżej kontenera
   fleetButtons?.addEventListener('click', async (e)=>{
     const btn=e.target.closest('button.btn[data-vehicle]'); if(!btn) return;
-    const tile = btn.closest('.vehicle-tile');
-    const vehicle = btn.getAttribute('data-vehicle');
-    const table   = vehicleToTableName(vehicle);
 
-    // podświetlenie aktywnego przycisku
+    // podświetl aktywny
     $$('#fleetButtons .btn[data-vehicle]').forEach(b=>b.classList.remove('primary'));
     btn.classList.add('primary');
 
-    currentVehicle = vehicle;
-    currentTable   = table;
+    currentVehicle = btn.getAttribute('data-vehicle');
+    currentTable   = vehicleToTableName(currentVehicle);
 
-    if (mqDesktop.matches){
-      // DESKTOP: globalny panel
-      if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
-      compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments(compartmentsBox);
-      try{
-        const list=await fetchCompartmentsInTableOrder(currentTable);
-        renderCompartments(compartmentsBox, list, currentTable);
-        expandAllBtn.disabled=false; sendShortagesBtn.disabled=false; actionsWrap.style.display='flex';
-      }catch(err){
-        compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
-      }
-      // zamknij overlaye
-      $$('#fleetButtons .inline-slot').forEach(s=>{ s.hidden = true; s.innerHTML=''; });
-    } else {
-      // MOBILE: overlay w kafelku
-      // zamknij inne overlaye
-      $$('#fleetButtons .inline-slot').forEach(s=>{ if(s!==tile.querySelector('.inline-slot')){ s.hidden = true; s.innerHTML=''; } });
-      const slot = tile.querySelector('.inline-slot');
-      if (!slot) return;
-
-      slot.hidden = false;
-      slot.innerHTML = `
-        <div class="actions" data-mobile-actions>
-          <button class="btn" data-act="expand">Rozwiń wszystkie</button>
-          <button class="btn primary" data-act="send">Wyślij Braki</button>
-        </div>
-        <div class="compartments" data-mobile-compartments style="margin-top:12px;"></div>
-      `;
-      const localBox = slot.querySelector('[data-mobile-compartments]');
-      showLoadingCompartments(localBox);
-      try{
-        const list = await fetchCompartmentsInTableOrder(currentTable);
-        renderCompartments(localBox, list, currentTable);
-      }catch(err){
-        localBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
-      }
-      slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    // wyczyść i pokaż skeleton w JEDNYM, głównym panelu
+    if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
+    compartmentsBox.innerHTML=''; expandAllBtn.disabled=true; sendShortagesBtn.disabled=true; showLoadingCompartments();
+    try{
+      const list=await fetchCompartmentsInTableOrder(currentTable);
+      renderCompartments(list, currentTable);
+    }catch(err){
+      compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message || err}</div>`;
     }
+
+    // przewiń łagodnie tak, by panel był widoczny (przyciski zostają na miejscu)
+    document.getElementById('actionsWrap').scrollIntoView({behavior:'smooth', block:'start'});
   });
 
-  // Desktop: klik w skrytkach + wybór braków
+  // Klik w skrytkę oraz wybór braków
   compartmentsBox?.addEventListener('click', async (e)=>{
-    const cbtn = e.target.closest('.compartment-btn'); if(cbtn && currentTable) return openCompartmentDesktop(cbtn);
+    const cbtn = e.target.closest('.compartment-btn');
+    if(cbtn && currentTable){
+      const slot=cbtn.nextElementSibling;
+      if (slot.dataset.open==='true'){ slot.dataset.open='false'; slot.innerHTML=''; cbtn.classList.remove('primary'); return; }
+      // zamknij inne
+      $$('#compartments .equip-slot').forEach(s=>{ if(s!==slot){ s.dataset.open='false'; s.innerHTML=''; } });
+      $$('#compartments .compartment-btn').forEach(b=>{ if(b!==cbtn) b.classList.remove('primary'); });
+      const tableAtClick = currentTable;
+      cbtn.classList.add('primary'); slot.dataset.open='true'; showLoadingEquipInSlot(slot);
+      try{
+        const rows=await fetchEquip(tableAtClick, cbtn.getAttribute('data-compartment'));
+        if (currentTable !== tableAtClick) return;
+        renderEquipInSlot(slot, rows, tableAtClick, cbtn.getAttribute('data-compartment'));
+      } catch(err){ slot.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
+      return;
+    }
     const row=e.target.closest('.equip-row'); if(row){
       const k=keyFor(currentTable,row.dataset.compartment,row.dataset.id);
       row.classList.toggle('selected');
@@ -704,7 +608,7 @@
     }
   });
 
-  // Desktop: Rozwiń wszystkie
+  // Rozwiń wszystkie
   expandAllBtn?.addEventListener('click', async ()=>{
     if(!currentTable) return; const items=$$('#compartments .compartment-item');
     const tableAtClick = currentTable;
@@ -729,63 +633,10 @@
     }
   });
 
-  // Desktop: WYŚLIJ BRAKI
+  // WYŚLIJ BRAKI
   document.getElementById('sendShortagesBtn')?.addEventListener('click', async ()=>{ await sendShortagesForCurrent(); });
 
-  // MOBILE: zdarzenia w overlay
-  fleetButtons?.addEventListener('click', async (e)=>{
-    const slot = e.target.closest('.inline-slot'); if(!slot) return;
-
-    const actBtn = e.target.closest('[data-mobile-actions] [data-act]');
-    if(actBtn){
-      const act = actBtn.getAttribute('data-act');
-      if(act === 'expand'){
-        const localBox = slot.querySelector('[data-mobile-compartments]');
-        const items = $$('.compartment-item', localBox);
-        const tableAtClick = currentTable;
-        await Promise.all(items.map(async item=>{
-          const b=item.querySelector('.compartment-btn'); const s=item.querySelector('.equip-slot');
-          if(s.dataset.open==='true' && s.children.length) return;
-          b.classList.add('primary'); s.dataset.open='true'; showLoadingEquipInSlot(s);
-          try{ const rows=await fetchEquip(tableAtClick, b.getAttribute('data-compartment'));
-            if (currentTable !== tableAtClick) return; renderEquipInSlot(s, rows, tableAtClick, b.getAttribute('data-compartment'));
-          } catch(err){ s.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
-        }));
-      } else if (act === 'send'){
-        await sendShortagesForCurrent();
-      }
-      return;
-    }
-
-    const cbtn = e.target.closest('.compartment-btn');
-    if(cbtn){
-      const s = cbtn.nextElementSibling;
-      if (s.dataset.open === 'true'){
-        s.dataset.open = 'false'; s.innerHTML = ''; cbtn.classList.remove('primary'); return;
-      }
-      $$('.equip-slot', slot).forEach(x=>{ if(x!==s){ x.dataset.open='false'; x.innerHTML=''; }});
-      $$('.compartment-btn', slot).forEach(b=>{ if(b!==cbtn){ b.classList.remove('primary'); }});
-
-      const tableAtClick = currentTable;
-      cbtn.classList.add('primary'); s.dataset.open='true'; showLoadingEquipInSlot(s);
-      try{
-        const rows=await fetchEquip(tableAtClick, cbtn.getAttribute('data-compartment'));
-        if (currentTable !== tableAtClick) return;
-        renderEquipInSlot(s, rows, tableAtClick, cbtn.getAttribute('data-compartment'));
-      } catch(err){ s.innerHTML = `<div class="sub">Błąd pobierania sprzętu: ${err.message || err}</div>`; }
-      return;
-    }
-
-    const row = e.target.closest('.equip-row');
-    if(row){
-      const t = row.dataset.table, c = row.dataset.compartment, id = row.dataset.id;
-      const k = keyFor(t, c, id);
-      row.classList.toggle('selected');
-      if(row.classList.contains('selected')) selectedSet.add(k); else selectedSet.delete(k);
-    }
-  });
-
-  // Wspólny zapis braków
+  // Zapis braków (wspólny)
   async function sendShortagesForCurrent(){
     if(!currentVehicle || !currentTable) return;
     const selectedKeys = [...selectedSet].filter(k => k.startsWith(currentTable + '|'));
@@ -812,7 +663,6 @@
       showBanner(`Wysłano braki: ${rows.length} wiersz(y).`, 'ok', 4000);
       for (const k of [...selectedSet]) if (k.startsWith(currentTable + '|')) selectedSet.delete(k);
       $$('#compartments .equip-row.selected').forEach(r => r.classList.remove('selected'));
-      $$('#fleetButtons .inline-slot .equip-row.selected').forEach(r => r.classList.remove('selected'));
     }catch(err){ showBanner('Błąd zapisu braków.', 'err', 5000); }
   }
 
