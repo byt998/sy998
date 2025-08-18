@@ -230,79 +230,79 @@
   </section>
 
   <!-- AUTH -->
-  <section id="auth">
-    <div class="wrap">
-      <div class="card" id="authCard">
-        <div class="row-2">
-          <!-- LOGIN -->
-         <!-- LOGIN FORM -->
-<div id="loginBox" class="auth-center">
-  <div class="auth-card">
-  <div class="auth-logo">
-  <img src="logo.png" alt="Logo" />
-  
-    <h2>Logowanie</h2>
-    <div class="form-grid">
-      <div class="field">
-        <label for="loginPhone">Telefon</label>
-        <input id="loginPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
-      </div>
-      <div class="field">
-        <label for="loginPass">Hasło</label>
-        <input id="loginPass" class="input" type="password" autocomplete="current-password" />
-      </div>
-      <div class="error" id="loginError" aria-live="polite"></div>
-      <button type="button" class="btn primary block" id="loginBtn">Zaloguj</button>
-      <div style="text-align:center; margin-top:8px;">
-        <button type="button" id="goToRegisterBtn" class="btn" style="font-size:14px;">lub Zarejestruj</button>
-      </div>
-    </div>
-  </div>
-</div>
+<section id="auth">
+  <div class="wrap">
+    <div class="card" id="authCard">
 
+      <!-- LOGIN FORM -->
+      <div id="loginBox" class="auth-center">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <img src="logo.png" alt="Logo" />
+          </div>
+          <h2>Logowanie</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="loginPhone">Telefon</label>
+              <input id="loginPhone" class="input" type="tel" inputmode="tel" placeholder="+48 123456789" />
+            </div>
+            <div class="field">
+              <label for="loginPass">Hasło</label>
+              <input id="loginPass" class="input" type="password" autocomplete="current-password" />
+            </div>
+            <div class="error" id="loginError" aria-live="polite"></div>
+            <button type="button" class="btn primary block" id="loginBtn">Zaloguj</button>
+            <div style="text-align:center; margin-top:8px;">
+              <button type="button" id="goToRegisterBtn" class="btn" style="font-size:14px;">lub Zarejestruj</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<!-- REGISTER FORM (Ukryty na starcie) -->
-<div id="registerBox" class="auth-center hidden">
-  <div class="auth-card">
-  <div class="auth-logo">
-      <img src="logo.png" alt="Logo" />
-    </div>
-    <h2>Rejestracja</h2>
-    <div class="form-grid">
-      <div class="field">
-        <label for="regPhone">Telefon</label>
-        <input id="regPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
+      <!-- REGISTER FORM (ukryty na start) -->
+      <div id="registerBox" class="auth-center hidden">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <img src="logo.png" alt="Logo" />
+          </div>
+          <h2>Rejestracja</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="regPhone">Telefon</label>
+              <input id="regPhone" class="input" type="tel" inputmode="tel" placeholder="+48 668 529 988" />
+            </div>
+            <div class="field">
+              <label for="regShift">Zmiana</label>
+              <select id="regShift" class="input">
+                <option value="">Wybierz zmianę</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="Biuro">Biuro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="regPass">Hasło</label>
+              <input id="regPass" class="input" type="password" autocomplete="new-password" />
+            </div>
+            <div class="field">
+              <label for="regPass2">Potwierdź hasło</label>
+              <input id="regPass2" class="input" type="password" autocomplete="new-password" />
+            </div>
+            <div class="error" id="regError" aria-live="polite"></div>
+            <div class="okline" id="regOk" aria-live="polite" style="display:none"></div>
+            <button type="button" class="btn primary block" id="registerBtn">Zarejestruj</button>
+            <div style="text-align:center; margin-top:8px;">
+              <button type="button" id="goToLoginBtn" class="btn" style="font-size:14px;">lub Zaloguj</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <label for="regShift">Zmiana</label>
-        <select id="regShift" class="input">
-          <option value="">Wybierz zmianę</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="Biuro">Biuro</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="regPass">Hasło</label>
-        <input id="regPass" class="input" type="password" autocomplete="new-password" />
-      </div>
-      <div class="field">
-        <label for="regPass2">Potwierdź hasło</label>
-        <input id="regPass2" class="input" type="password" autocomplete="new-password" />
-      </div>
-      <div class="error" id="regError" aria-live="polite"></div>
-      <div class="okline" id="regOk" aria-live="polite" style="display:none"></div>
-      <button type="button" class="btn primary block" id="registerBtn">Zarejestruj</button>
-      <div style="text-align:center; margin-top:8px;">
-        <button type="button" id="goToLoginBtn" class="btn" style="font-size:14px;">lub Zaloguj</button>
-      </div>
-    </div>
-  </div>
-</div>
 
+    </div><!-- /card -->
+  </div><!-- /wrap -->
+</section>
 
-  </section>
 
   <!-- FLEET -->
   <section id="fleet" class="hidden">
