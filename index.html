@@ -575,6 +575,23 @@ function placeCompWrap() {
     compOriginalParent.appendChild(compartmentsOuter);
   }
 }
+function closeVehiclePanel(){
+  // schowaj panel + akcje
+  compartmentsOuter.style.display = 'none';
+  actionsWrap.style.display = 'none';
+
+  // wyczyść UI i stan
+  compartmentsBox.innerHTML = '';
+  compartmentsOuter.dataset.openFor = '';
+  currentVehicle = null;
+  currentTable = null;
+
+  // reset przycisków
+  $$('#fleetButtons .btn').forEach(b => b.classList.remove('primary'));
+  if (collapseAllBtn) { collapseAllBtn.remove(); collapseAllBtn = null; }
+  expandAllBtn.disabled = true;
+  sendShortagesBtn.disabled = true;
+}
   const compartmentsBox=$('#compartments');
   const expandAllBtn=$('#expandAllBtn'), sendShortagesBtn=$('#sendShortagesBtn');
   let collapseAllBtn=null;
@@ -637,25 +654,46 @@ function placeCompWrap() {
 
   // Klik w wóz → pokaż skrytki w STAŁYM kontenerze pod przyciskami
   fleetButtons?.addEventListener('click', async (e)=>{
-    const btn=e.target.closest('[data-vehicle]'); if(!btn) return;
-    $$('#fleetButtons .btn').forEach(b=>b.classList.remove('primary')); btn.classList.add('primary');
-    placeCompWrap();
-    window.addEventListener('resize', placeCompWrap);
+  const btn = e.target.closest('[data-vehicle]');
+  if(!btn) return;
 
+  const vehicle = btn.getAttribute('data-vehicle');
+  const table   = vehicleToTableName(vehicle);
 
-    currentVehicle=btn.getAttribute('data-vehicle');
-    currentTable=vehicleToTableName(currentVehicle);
+  // TOGGLE: jeśli klikamy ponownie w ten sam wóz -> zamknij i wyjdź
+  if (compartmentsOuter.dataset.openFor === table && compartmentsOuter.style.display !== 'none') {
+    closeVehiclePanel();
+    return;
+  }
 
-    if(collapseAllBtn){ collapseAllBtn.remove(); collapseAllBtn=null; }
+  // Otwieramy/zmieniamy wóz
+  $$('#fleetButtons .btn').forEach(b => b.classList.remove('primary'));
+  btn.classList.add('primary');
 
-    expandAllBtn.disabled=true; sendShortagesBtn.disabled=true;
-    compartmentsBox.innerHTML=''; showLoadingCompartments();
+  currentVehicle = vehicle;
+  currentTable   = table;
 
-    try{
-      const list=await fetchCompartmentsInTableOrder(currentTable);
-      renderCompartments(list);
-    }catch(err){ compartmentsBox.innerHTML=`<div class="sub">Błąd pobierania skrytek: ${err.message||err}</div>`; }
-  });
+  // ustaw panel (mobile: pod przyciskiem, desktop: pod akcjami)
+  placeCompWrap();
+
+  // pokaż panel i przygotuj UI
+  compartmentsOuter.style.display = '';   // w HTML startowo masz display:none
+  actionsWrap.style.display = 'flex';
+  expandAllBtn.disabled = true;
+  sendShortagesBtn.disabled = true;
+  compartmentsBox.innerHTML = '';
+  compartmentsOuter.dataset.openFor = table; // zapamiętaj otwarty wóz
+
+  // skeletony + pobranie skrytek
+  showLoadingCompartments();
+  try{
+    const list = await fetchCompartmentsInTableOrder(currentTable);
+    renderCompartments(list);
+  }catch(err){
+    compartmentsBox.innerHTML = `<div class="sub">Błąd pobierania skrytek: ${err.message||err}</div>`;
+  }
+});
+
 
   // Klik w skrytkę / sprzęt (delegacja na stałym kontenerze)
   compartmentsBox?.addEventListener('click', (e)=>{
