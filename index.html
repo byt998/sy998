@@ -191,6 +191,24 @@
   height: auto;
 }
 
+/* Gdy #compWrap zostanie wstawiony do .fleet-buttons,
+   niech zajmie pełną szerokość wiersza przycisków */
+.fleet-buttons > #compWrap {
+  flex: 1 1 100%;
+  margin-top: 8px;
+}
+
+/* Na mobile upewnij się, że może mieć 100% szerokości */
+@media (max-width: 640px){
+  #compWrap { width: 100%; }
+}
+
+/* (opcjonalnie) usuń wyśrodkowanie wewnątrz #compWrap na mobile,
+   aby lista wyglądała naturalnie pod przyciskiem */
+@media (max-width: 640px){
+  #compWrap.compartments-wrap { justify-content: stretch; }
+}
+
 
 </style>
 </head>
@@ -543,6 +561,20 @@ goToLoginBtn?.addEventListener('click', () => {
   // ====== FLEET (przyciski u góry, stały kontener skrytek pod nimi) ======
   const fleetButtons=$('#fleetButtons'), actionsWrap=$('#actionsWrap');
   const compartmentsOuter=document.getElementById('compWrap'); // stały, pod akcjami
+  // zapamiętaj oryginalnego rodzica, żeby na desktopie odkładać panel na miejsce
+const compOriginalParent = compartmentsOuter.parentElement;
+
+// narzędzie do ustawiania #compWrap we właściwym miejscu
+function placeCompWrap() {
+  const activeBtn = document.querySelector('#fleetButtons .btn.primary');
+  if (window.matchMedia('(max-width: 640px)').matches && activeBtn) {
+    // mobile: wsadź panel zaraz za aktywny przycisk
+    activeBtn.insertAdjacentElement('afterend', compartmentsOuter);
+  } else {
+    // desktop: odłóż pod akcje (tak jak było)
+    compOriginalParent.appendChild(compartmentsOuter);
+  }
+}
   const compartmentsBox=$('#compartments');
   const expandAllBtn=$('#expandAllBtn'), sendShortagesBtn=$('#sendShortagesBtn');
   let collapseAllBtn=null;
@@ -607,6 +639,9 @@ goToLoginBtn?.addEventListener('click', () => {
   fleetButtons?.addEventListener('click', async (e)=>{
     const btn=e.target.closest('[data-vehicle]'); if(!btn) return;
     $$('#fleetButtons .btn').forEach(b=>b.classList.remove('primary')); btn.classList.add('primary');
+    placeCompWrap();
+    window.addEventListener('resize', placeCompWrap);
+
 
     currentVehicle=btn.getAttribute('data-vehicle');
     currentTable=vehicleToTableName(currentVehicle);
