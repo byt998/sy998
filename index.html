@@ -449,6 +449,34 @@
   let lastSectionId=localStorage.getItem('lastSectionId')||'#home';
   function showOnly(section){ sections.forEach(s=>s.classList.add('hidden')); section.classList.remove('hidden'); lastSectionId='#'+section.id; try{localStorage.setItem('lastSectionId',lastSectionId);}catch(_){} window.scrollTo({top:0,behavior:'smooth'}); }
 
+// --- Guard "Wstecz" -> pytanie o wylogowanie ---
+let backGuardEnabled = false;
+
+function onBackGuard(){
+  if(!backGuardEnabled) return;
+  const ok = confirm('Czy na pewno chcesz się WYLOGOWAĆ?');
+  if(ok){
+    window.performLogout?.();
+  }else{
+    // odtwarzamy wpis w historii, by kolejny "Wstecz" znów trafił tutaj
+    history.pushState({guard:'back-logout'}, '');
+  }
+}
+
+function enableBackLogoutGuard(){
+  if(backGuardEnabled) return;
+  backGuardEnabled = true;
+  history.pushState({guard:'back-logout'}, '');  // dodaj bufor do historii
+  window.addEventListener('popstate', onBackGuard);
+}
+
+function disableBackLogoutGuard(){
+  if(!backGuardEnabled) return;
+  backGuardEnabled = false;
+  window.removeEventListener('popstate', onBackGuard);
+}
+
+
   async function isViewer(userId){ if(!userId) return false; const { data } = await supabase.from('shortages_viewers').select('user_id').eq('user_id',userId).maybeSingle(); return !!data; }
   async function refreshAuthUI(session){
     try{
@@ -485,17 +513,49 @@ userBadgeBtn?.addEventListener('click', (e) => {
 });
 
 // Ukryj menu po kliknięciu gdziekolwiek poza nim
-document.addEventListener('click', (e) => {
-  if (!authBox.contains(e.target)) {
-    userMenu.classList.add('hidden');
+// Podpinamy TYLKO raz
+if (!window._menuOutsideClickAttached) {
+  document.addEventListener('click', (e) => {
+    const box  = document.getElementById('authBox');   // zawsze bierz aktualny węzeł
+    const menu = document.getElementById('userMenu');  // i aktualne menu (może nie istnieć)
+    if (!box || !menu) return;                         // gdy niezalogowany – nic nie rób
+    if (!box.contains(e.target)) {
+      menu.classList.add('hidden');
+    }
+  });
+  window._menuOutsideClickAttached = true;
+}
+
+// globalna wersja – dostępna wszędzie
+window.performLogout = async function(){
+  try{
+    await supabase.auth.signOut();
+    showBanner('Wylogowano.','ok');
+  }catch(err){
+    showBanner('Błąd wylogowania','err',4000);
+  } finally{
+    showOnly(sectionAuth);
+    authBox.innerHTML='';
+    menuApp.classList.add('hidden');
+    menuAuth.classList.remove('hidden');
+    try{ localStorage.removeItem('lastSectionId'); }catch(_){}
+    disableBackLogoutGuard();
   }
+};
+
+
+
+       $('#logoutBtn')?.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  await window.performLogout();
 });
 
 
-        $('#logoutBtn')?.addEventListener('click', async (e)=>{ e.preventDefault(); try{ await supabase.auth.signOut(); showBanner('Wylogowano.','ok'); }catch(err){ showBanner('Błąd wylogowania','err',4000); } finally{ showOnly(sectionAuth); authBox.innerHTML=''; menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden'); try{localStorage.removeItem('lastSectionId');}catch(_){} } });
-        const target=sections.find(s=> '#'+s.id===lastSectionId )||sectionHome; showOnly(target); if(target===sectionHome) loadTodayTask();
+        const target=sections.find(s=> '#'+s.id===lastSectionId )||sectionHome; showOnly(target); if(target===sectionHome) loadTodayTask(); enableBackLogoutGuard();
+
       } else {
-        authBox.innerHTML=''; menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden'); showOnly(sectionAuth);
+        authBox.innerHTML=''; menuApp.classList.add('hidden'); menuAuth.classList.remove('hidden'); showOnly(sectionAuth); disableBackLogoutGuard();
+
       }
     }catch(e){}
   }
