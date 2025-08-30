@@ -209,6 +209,303 @@
   #compWrap.compartments-wrap { justify-content: stretch; }
 }
 
+.quiz-btn.correct {
+  background-color: #4CAF50 !important;
+  color: white;
+}
+
+.quiz-btn.incorrect {
+  background-color: #F44336 !important;
+  color: white;
+}
+
+.quiz-btn.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+#ranking-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#ranking-container th, #ranking-container td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#ranking-container th {
+  background-color: #f2f2f2;
+}
+
+#ritTableContainer table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0px black; /* GRUBY czarny cień */
+  margin-top: 10px;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#ritTableContainer th, #ritTableContainer td {
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+#ritTableContainer th {
+  background-color: #f0f0f0;
+  font-size: 16px;
+}
+
+#ritTableContainer tr:nth-child(even) td {
+  background-color: #f9f9f9; /* Szary co drugi wiersz */
+}
+
+#ritTableContainer tr:last-child td {
+  border-bottom: none;
+}
+
+
+
+
+#helpSection .container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#helpSection h1, #helpSection h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#helpSection h1 {
+  font-size: 24px;
+}
+
+#helpSection h2 {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#helpSection .card {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0px #000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.5s ease forwards;
+}
+
+#helpSection .card:hover {
+  transform: scale(1.02);
+  box-shadow: 6px 6px 0px #000;
+}
+
+#helpSection .card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#helpSection ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#helpSection li {
+  font-size: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#helpSection .centered-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#helpSection .centered-list li {
+  justify-content: center;
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+#helpSection .arrow {
+  font-size: 22px;
+  color: #000;
+  animation: bounce 1.2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+
+}
+
+.card-style-button {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 4px rgb(0, 0, 0);
+  transition: background-color 0.3s ease;
+}
+
+#helpSectionAlt .container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#helpSectionAlt h1, #helpSectionAlt h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#helpSectionAlt .card {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0px #000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.5s ease forwards;
+}
+
+#helpSectionAlt .card:hover {
+  transform: scale(1.02);
+  box-shadow: 6px 6px 0px #000;
+}
+
+#helpSectionAlt .card h3 {
+    font-size: 18px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#helpSectionAlt ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#helpSectionAlt li {
+  font-size: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#helpSectionAlt .centered-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#helpSectionAlt .centered-list li {
+  justify-content: center;
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+#helpSectionAlt .arrow {
+  font-size: 24px;
+  color: black;
+  animation: bounce 1.2s infinite;
+}
+
+  @keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+
+  }
+
+  @keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+
+}
+
+
+.device-button {
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  border: 2px solid black;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 16px;
+  box-shadow: 4px 4px 0px black;
+  cursor: pointer;
+  margin: 10px 0;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.device-button:hover {
+  transform: scale(1.02);
+  box-shadow: 6px 6px 0px black;
+}
+
+#deviceSectionContainer table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0px black;
+  margin-top: 10px;
+  font-family: Arial, sans-serif;
+}
+
+#deviceSectionContainer th, #deviceSectionContainer td {
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+#deviceSectionContainer tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+
 
 </style>
 </head>
@@ -384,8 +681,204 @@
 
   <!-- Wiedza -->
   <section id="knowledge" class="hidden">
-    <div class="wrap"><div class="card"><h2>Wiedza</h2><p class="sub">Materiały szkoleniowe, procedury, „ściągi”.</p></div></div>
-  </section>
+  <div class="wrap">
+    <div class="card">
+      <h2>Wiedza</h2>
+      <p class="sub">Materiały szkoleniowe, procedury, „ściągi”.</p>
+    
+      <div id="knowledge-buttons" style="display: block;">
+  <div style="margin-bottom: 10px;">
+    <button class="btn primary" id="startQuizBtn" style="display: block; width: 100%; margin-bottom: 10px;">Quiz tygodniowy</button>
+    <button class="btn primary" id="ritBtn" style="display: block; width: 100%; margin-bottom: 10px;">RIT</button>
+    
+</div>
+
+   <div id="ritSection" style="display: none; margin-top: 16px;">
+  <!-- KONTENER PRZYCISKÓW -->
+<div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 16px;">
+
+  <!-- PRZYCISK TORBA RIT -->
+  <div style="display: flex; flex-direction: column; align-items: center;">
+   <button id="toggleRitTable" class="card-style-button">TORBA RIT</button>
+
+    <!-- TABELA POD PRZYCISKIEM -->
+    <div id="ritTableContainer" style="display: none; margin-top: 10px; width: 100%; max-width: 600px;">
+      <!-- Tabela zostanie załadowana dynamicznie -->
+    </div>
+  </div>
+
+  <!-- PRZYCISK WEZWANIE POMOCY -->
+<button id="helpRequestBtn" class="card-style-button">Wezwanie Pomocy</button>
+<div id="helpSection" style="display: none; margin-top: 20px;">
+  <!-- Tutaj wkleisz zawartość z GRAFIKA.html -->
+     <div class="container">
+    <h1>Załącznik nr 2</h1>
+    <h2>Wezwanie pomocy przez strażaka (sprawny aparat OUO)</h2>
+
+    <!-- Karty -->
+    <div class="card">
+      <h3>1️⃣ Sytuacja wymagająca wezwania pomocy</h3>
+    </div>
+
+    <div class="card">
+      <h3>2️⃣ Wezwanie pomocy przez zagrożonego strażaka:</h3>
+      <ul class="centered-list">
+        <li>🚨 „Ratunek, Ratunek, Ratunek”</li>
+        <div class="arrow">⬇</div>
+        <li>📍 Gdzie?</li>
+        <div class="arrow">⬇</div>
+        <li>❓ Co?</li>
+        <div class="arrow">⬇</div>
+        <li>🧑‍🚒 Kto?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>3️⃣ Uzyskanie potwierdzenia</h3>
+      <ul>
+        <li>🔄 W przypadku braku potwierdzenia kontynuować dalszą procedurę</li>
+        <li>📞 Systematycznie, co jakiś czas wzywać pomoc</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>4️⃣ Aktywowanie sygnalizatora bezruchu</h3>
+    </div>
+
+    <div class="card">
+      <h3>5️⃣ Próby ewakuacji (samoratowanie)</h3>
+      <p>Jeżeli nie ma szans na ewakuację – minimalizować wysiłek</p>
+    </div>
+
+    <div class="card">
+      <h3>6️⃣ Utrzymywanie łączności z RIT</h3>
+      <p>Jeżeli jest łączność</p>
+    </div>
+
+    <div class="card">
+      <h3>7️⃣ Odwołanie wezwania o pomoc</h3>
+      <p>W przypadku udanego samoratowania</p>
+    </div>
+  </div>
+</div>
+<button id="helpRequestBtnAlt" class="card-style-button">Wezwanie Pomocy – Awaria OUO</button>
+<div id="helpSectionAlt" style="display: none; margin-top: 20px;">
+ <div class="container">
+    <h1>Załącznik nr 3</h1>
+    <h2>Wezwanie pomocy przez strażaka w przypadku awarii aparatu OUO</h2>
+
+    <div class="card">
+      <h3>1️⃣ Sytuacja wymagająca wezwania pomocy związana z awarią aparatu OUO</h3>
+    </div>
+
+    <div class="card">
+      <h3>2️⃣ Położyć się na podłodze</h3>
+    </div>
+
+    <div class="card">
+      <h3>3️⃣ Aktywować alarm sygnalizatora bezruchu</h3>
+    </div>
+
+    <div class="card">
+      <h3>4️⃣ Sprawdzić automat oddechowy</h3>
+    </div>
+
+    <div class="card">
+      <h3>5️⃣ Odłączyć automat oddechowy</h3>
+    </div>
+
+    <div class="card">
+      <h3>6️⃣ Nałożyć kominiarkę na otwór, rękawica – opcjonalnie</h3>
+    </div>
+
+    <div class="card">
+      <h3>7️⃣ Wezwać pomoc drogą radiową (przykryć sygnalizator dłonią):</h3>
+      <ul class="centered-list">
+        <li>🚨 „Ratunek, Ratunek, Ratunek”</li>
+        <div class="arrow">⬇</div>
+        <li>📍 Gdzie?</li>
+        <div class="arrow">⬇</div>
+        <li>❓ Co?</li>
+        <div class="arrow">⬇</div>
+        <li>🧑‍🚒 Kto?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>8️⃣ Uzyskać potwierdzenie</h3>
+      <ul>
+        <li>🔄 W przypadku braku potwierdzenia kontynuować dalszą procedurę</li>
+        <li>📞 Systematycznie, co jakiś czas wzywać pomoc</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>9️⃣ Podjąć próby opuszczenia strefy zagrożenia</h3>
+    </div>
+
+    <div class="card">
+      <h3>🔟 Odwołać wezwanie o pomoc w przypadku udanego samoratowania</h3>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+
+  <div id="ritTableContainer" style="display: none;"></div>
+
+
+
+</div>
+ <button class="btn primary" id="pomiaroweBtn" style="display: block; width: 100%;">Przyrządy pomiarowe</button>
+
+<div id="toolsSection" style="display: none; margin: 10px;">
+  <div class="container">
+    <h2>Przyrządy pomiarowe</h2>
+    <div style="display: flex; justify-content: center;">
+  <div id="deviceButtonsContainer" style="display: flex; flex-direction: column; align-items: center;"></div>
+</div>
+<div id="deviceSectionContainer"></div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 16px;">
+    
+  </div>
+
+    </div>
+  </div>
+ 
+</section>
+
+<section id="quiz" class="hidden">
+  <div class="wrap">
+    <div class="card">
+      <h2>Quiz tygodniowy</h2>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+       <button class="btn primary" id="run-weekly-quiz">Rozpocznij Quiz</button>
+<div id="quiz-container" style="margin-top: 16px;"></div>
+<div id="ranking" style="margin-top: 32px;">
+  <div style="margin-bottom: 10px;">
+    <button class="btn" onclick="loadRanking('weekly')">Ranking Tygodniowy</button>
+    <button class="btn" onclick="loadRanking('monthly')">Ranking Miesięczny</button>
+  </div>
+  <div id="ranking-container">
+    <p>Wybierz ranking powyżej</p>
+  </div>
+</div>
+
+        <p class="sub" style="margin-top: 12px;">
+          W quizie można wziąć udział jeden raz w tygodniu (od Poniedziałku do Niedzieli do godziny 23:59).<br />
+          Quiz składa się z 10 pytań. Na odpowiedź masz 25 sekund.<br />
+          W każdy poniedziałek generuje się ranking tygodniowy, a w każdy pierwszy dzień miesiąca zobaczysz ranking miesięczny.<br />
+          Baw się dobrze!
+        </p>
+        <a class="btn" href="#knowledge" data-nav>Powrót</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 
   <!-- BRAKI -->
   <section id="shortages" class="hidden">
@@ -428,6 +921,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 <script>
+    
   // ===== Helpers =====
   const $  = (s, el=document) => el.querySelector(s);
   const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
@@ -440,12 +934,14 @@
   // ===== Supabase =====
   const SUPABASE_URL = 'https://edihhrnejcdfashksssj.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkaWhocm5lamNkZmFzaGtzc3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MzcyMzEsImV4cCI6MjA2OTMxMzIzMX0.ci5U5kcutKCKVePCu-S-CmsxKm7pup6Bjbralj1aF9Y';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession:false, autoRefreshToken:true, storageKey:'wozy-auth' } });
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession:true, autoRefreshToken:true, storageKey:'wozy-auth' } });
 
   // ===== Sekcje/Menu =====
   const menuAuth=$('#menuAuth'), menuApp=$('#menuApp'), authBox=$('#authBox');
   const sectionHome=$('#home'), sectionAuth=$('#auth'), sectionFleet=$('#fleet'), sectionEquip=$('#equip'), sectionKnowledge=$('#knowledge'), sectionShort=$('#shortages');
-  const sections=[sectionHome,sectionAuth,sectionFleet,sectionEquip,sectionKnowledge,sectionShort];
+  const sectionQuiz = document.getElementById('quiz');
+  const sections = [sectionHome, sectionAuth, sectionFleet, sectionEquip, sectionKnowledge, sectionShort, sectionQuiz];
+
   let lastSectionId=localStorage.getItem('lastSectionId')||'#home';
   function showOnly(section){ sections.forEach(s=>s.classList.add('hidden')); section.classList.remove('hidden'); lastSectionId='#'+section.id; try{localStorage.setItem('lastSectionId',lastSectionId);}catch(_){} window.scrollTo({top:0,behavior:'smooth'}); }
 
@@ -830,6 +1326,13 @@ function closeVehiclePanel(){
   document.querySelector('a[href="#fleet"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionFleet); });
   document.querySelector('a[href="#equip"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionEquip); });
   document.querySelector('a[href="#knowledge"][data-nav]')?.addEventListener('click', (e)=>{ e.preventDefault(); showOnly(sectionKnowledge); });
+  document.getElementById('startQuizBtn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  history.pushState({}, '', '#quiz'); // zmienia adres URL
+  showOnly(document.getElementById('quiz')); // wyświetla tylko quiz
+});
+
+
   document.querySelector('#menuShortagesLink[data-nav]')?.addEventListener('click', async (e)=>{
     e.preventDefault();
     const { data: me } = await supabase.auth.getUser();
@@ -865,8 +1368,520 @@ function closeVehiclePanel(){
   }
   equipSearchBtn?.addEventListener('click',()=>searchEquipmentGlobal(equipQueryInput.value));
   equipQueryInput?.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); searchEquipmentGlobal(equipQueryInput.value); } });
+
+const startQuizButton = document.getElementById('run-weekly-quiz');
+  const quizContainer = document.getElementById('quiz-container');
+
+  async function getCurrentUserProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (error) return null;
+    return { userId: user.id, fullName: data.full_name };
+  }
+
+  function getCurrentWeekStartDate() {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(now.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    return monday.toISOString();
+  }
+
+  async function hasUserCompletedQuiz(userId) {
+    const weekStart = getCurrentWeekStartDate();
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('week_start', weekStart);
+
+    return data && data.length > 0;
+  }
+
+  async function loadQuestions() {
+    const { data, error } = await supabase
+      .from('quiz_questions')
+      .select('*')
+      .eq('active', true);
+    
+    if (error || !data) return [];
+    const shuffled = data.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 10);
+  }
+
+  function askQuestion(questionObj, index) {
+    return new Promise((resolve) => {
+      quizContainer.innerHTML = `
+        <h3>Pytanie ${index + 1}/10</h3>
+        <p>${questionObj.question}</p>
+        <div class="quiz-options" style="display: flex; flex-direction: column; gap: 10px;">
+  ${['a','b','c','d','e'].map(opt => `
+    <button class="btn quiz-btn" data-answer="${opt}">
+      ${opt.toUpperCase()}: ${questionObj[opt] || ''}
+    </button>
+  `).join('')}
+</div>
+
+        <p id="timer">25</p>
+      `;
+
+      let selected = null;
+      const buttons = quizContainer.querySelectorAll('button[data-answer]');
+      buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    selected = btn.dataset.answer;
+    clearInterval(timerInterval);
+
+    buttons.forEach(b => {
+      b.classList.add('disabled');
+      if (b.dataset.answer === questionObj.correct) {
+        b.classList.add('correct');
+      } else if (b === btn) {
+        b.classList.add('incorrect');
+      }
+    });
+
+    setTimeout(() => resolve(selected), 1500); // poczekaj 1.5s zanim przejdziesz dalej
+  });
+});
+
+
+      let timeLeft = 25;
+      const timer = quizContainer.querySelector('#timer');
+      const timerInterval = setInterval(() => {
+        timeLeft--;
+        timer.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          resolve(null);
+        }
+      }, 1000);
+    });
+  }
+
+  async function runQuiz(userId, fullName) {
+    const questions = await loadQuestions();
+    let score = 0;
+    const total = questions.length;
+    const startedAt = new Date();
+
+    for (let i = 0; i < total; i++) {
+      const answer = await askQuestion(questions[i], i);
+      if (answer && answer === questions[i].correct) score++;
+    }
+
+    const finishedAt = new Date();
+    const weekStart = getCurrentWeekStartDate();
+
+    await supabase.from('quiz_attempts').insert({
+      user_id: userId,
+      started_at: startedAt.toISOString(),
+      finished_at: finishedAt.toISOString(),
+      score,
+      total,
+      week_start: weekStart
+    });
+
+    quizContainer.innerHTML = `
+      <h2>Twój wynik: ${score}/${total}</h2>
+      <p>Dziękujemy za udział, ${fullName}!</p>
+    `;
+  }
+
+  startQuizButton?.addEventListener('click', async () => {
+    quizContainer.innerHTML = '<p>Ładowanie quizu...</p>';
+    const user = await getCurrentUserProfile();
+    if (!user) {
+      quizContainer.innerHTML = '<p>Musisz być zalogowany, aby wziąć udział w quizie.</p>';
+      return;
+    }
+
+    const alreadyPlayed = await hasUserCompletedQuiz(user.userId);
+    if (alreadyPlayed) {
+      quizContainer.innerHTML = '<p>Już wziąłeś udział w quizie w tym tygodniu.</p>';
+      return;
+    }
+
+    await runQuiz(user.userId, user.fullName);
+  });
+
+  async function loadRanking(type) {
+  const container = document.getElementById('ranking-container');
+  container.innerHTML = '<p>Ładowanie...</p>';
+
+  const tableName = type === 'weekly' ? 'quiz_weekly_scores' : 'quiz_monthly_scores';
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select('user_id, total_score, period_start')
+    .order('total_score', { ascending: false });
+
+  if (error) {
+    container.innerHTML = '<p>Błąd ładowania rankingu.</p>';
+    console.error(error);
+    return;
+  }
+
+  const userIds = data.map(entry => entry.user_id);
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('user_id, full_name')
+    .in('user_id', userIds);
+
+  const profileMap = Object.fromEntries(
+    profiles.map(p => [p.user_id, p.full_name])
+  );
+
+  const rows = data.map((entry, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${profileMap[entry.user_id] || entry.user_id}</td>
+      <td>${entry.total_score}</td>
+      <td>${entry.period_start.split('T')[0]}</td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Pozycja</th>
+          <th>Użytkownik</th>
+          <th>Punkty</th>
+          <th>Okres</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+  `;
+}
+
+
 </script>
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+  const supabase = createClient(
+    'https://edihhrnejcdfashksssj.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkaWhocm5lamNkZmFzaGtzc3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MzcyMzEsImV4cCI6MjA2OTMxMzIzMX0.ci5U5kcutKCKVePCu-S-CmsxKm7pup6Bjbralj1aF9Y'
+  );
+
+  const startQuizButton = document.getElementById('run-weekly-quiz');
+  const quizContainer = document.getElementById('quiz-container');
+
+  async function getCurrentUserProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (error) return null;
+    return { userId: user.id, fullName: data.full_name };
+  }
+
+  function getCurrentWeekStartDate() {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(now.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    return monday.toISOString();
+  }
+
+  async function hasUserCompletedQuiz(userId) {
+    const weekStart = getCurrentWeekStartDate();
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('week_start', weekStart);
+
+    return data && data.length > 0;
+  }
+
+  async function loadQuestions() {
+    const { data, error } = await supabase
+      .from('quiz_questions')
+      .select('*')
+      .eq('active', true);
+    
+    if (error || !data) return [];
+    const shuffled = data.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 10);
+  }
+
+  function askQuestion(questionObj, index) {
+    return new Promise((resolve) => {
+      quizContainer.innerHTML = `
+        <h3>Pytanie ${index + 1}/10</h3>
+        <p>${questionObj.question}</p>
+        <div>
+          ${['a','b','c','d','e'].map(opt => `
+            <button class="btn" data-answer="${opt}">
+              ${opt.toUpperCase()}: ${questionObj[opt] || ''}
+            </button>
+          `).join('')}
+        </div>
+        <p id="timer">25</p>
+      `;
+
+      let selected = null;
+      const buttons = quizContainer.querySelectorAll('button[data-answer]');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          selected = btn.dataset.answer;
+          clearInterval(timerInterval);
+          resolve(selected);
+        });
+      });
+
+      let timeLeft = 25;
+      const timer = quizContainer.querySelector('#timer');
+      const timerInterval = setInterval(() => {
+        timeLeft--;
+        timer.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          resolve(null);
+        }
+      }, 1000);
+    });
+  }
+
+  async function runQuiz(userId, fullName) {
+    const questions = await loadQuestions();
+    let score = 0;
+    const total = questions.length;
+    const startedAt = new Date();
+
+    for (let i = 0; i < total; i++) {
+      const answer = await askQuestion(questions[i], i);
+      if (answer && answer === questions[i].correct) score++;
+    }
+
+    const finishedAt = new Date();
+    const weekStart = getCurrentWeekStartDate();
+
+    await supabase.from('quiz_attempts').insert({
+      user_id: userId,
+      started_at: startedAt.toISOString(),
+      finished_at: finishedAt.toISOString(),
+      score,
+      total,
+      week_start: weekStart
+    });
+
+    quizContainer.innerHTML = `
+      <h2>Twój wynik: ${score}/${total}</h2>
+      <p>Dziękujemy za udział, ${fullName}!</p>
+    `;
+  }
+
+  startQuizButton?.addEventListener('click', async () => {
+    quizContainer.innerHTML = '<p>Ładowanie quizu...</p>';
+    const user = await getCurrentUserProfile();
+    if (!user) {
+      quizContainer.innerHTML = '<p>Musisz być zalogowany, aby wziąć udział w quizie.</p>';
+      return;
+    }
+
+    const alreadyPlayed = await hasUserCompletedQuiz(user.userId);
+    if (alreadyPlayed) {
+      quizContainer.innerHTML = '<p>Już wziąłeś udział w quizie w tym tygodniu.</p>';
+      return;
+    }
+
+    await runQuiz(user.userId, user.fullName);
+  });
+
+
+
+const ritBtn = document.getElementById('ritBtn');
+const ritSection = document.getElementById('ritSection');
+const ritTableContainer = document.getElementById('ritTableContainer');
+
+ritBtn?.addEventListener('click', () => {
+  const isVisible = ritSection.style.display === 'block';
+  ritSection.style.display = isVisible ? 'none' : 'block';
+});
+
+
+const toggleRitTableBtn = document.getElementById('toggleRitTable');
+
+
+toggleRitTableBtn?.addEventListener('click', async () => {
+  const isVisible = ritTableContainer.style.display === 'block';
+  ritTableContainer.style.display = isVisible ? 'none' : 'block';
+
+  if (!isVisible) {
+    ritTableContainer.innerHTML = '<p>Ładowanie danych...</p>';
+    const { data, error } = await supabase
+      .from('torba_rit')
+      .select('sprzet, ilosc');
+
+    if (error) {
+      ritTableContainer.innerHTML = '<p>Błąd ładowania danych.</p>';
+      console.error(error);
+      return;
+    }
+
+    const rows = data.map(item => `
+      <tr>
+        <td>${item.sprzet}</td>
+        <td>${item.ilosc}</td>
+      </tr>
+    `).join('');
+
+    ritTableContainer.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>SPRZĘT</th>
+            <th>ILOŚĆ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+});
+
+
+
+
+const helpSection = document.getElementById('helpSection');
+
+helpRequestBtn?.addEventListener('click', () => {
+  const isVisible = helpSection.style.display === 'block';
+  helpSection.style.display = isVisible ? 'none' : 'block';
+});
+
+
+const helpRequestBtnAlt = document.getElementById('helpRequestBtnAlt');
+
+
+
+
+
+
+const helpSectionAlt = document.getElementById('helpSectionAlt');
+
+helpRequestBtnAlt?.addEventListener('click', () => {
+  const isVisible = helpSectionAlt.style.display === 'block';
+  helpSectionAlt.style.display = isVisible ? 'none' : 'block';
+});
+
+
+const toolsBtn = document.getElementById('pomiaroweBtn');
+const toolsSection = document.getElementById('toolsSection');
+
+toolsBtn?.addEventListener('click', () => {
+  const isVisible = toolsSection.style.display === 'block';
+  toolsSection.style.display = isVisible ? 'none' : 'block';
+});
+
+const msaBtn = document.getElementById('msaBtn');
+const msaSection = document.getElementById('msaSection');
+
+msaBtn?.addEventListener('click', () => {
+  const isVisible = msaSection.style.display === 'block';
+  msaSection.style.display = isVisible ? 'none' : 'block';
+});
+
+
+const deviceButtonsContainer = document.getElementById('deviceButtonsContainer');
+const deviceSectionContainer = document.getElementById('deviceSectionContainer');
+
+let activeDeviceId = null;
+
+async function loadDevices() {
+  const { data: devices, error } = await supabase.from('devices').select('*');
+  if (error) {
+    console.error('Błąd ładowania urządzeń:', error);
+    return;
+  }
+
+  devices.forEach(device => {
+    const button = document.createElement('button');
+    button.textContent = device.device_name;
+    button.className = 'device-button';
+    button.addEventListener('click', () => toggleDeviceDetails(device));
+    deviceButtonsContainer.appendChild(button);
+  });
+}
+
+async function toggleDeviceDetails(device) {
+  // Ukryj, jeśli kliknięto ponownie ten sam przyrząd
+  if (activeDeviceId === device.id) {
+    deviceSectionContainer.innerHTML = '';
+    activeDeviceId = null;
+    return;
+  }
+
+  activeDeviceId = device.id;
+
+  const { data: sensors, error } = await supabase
+    .from('device_sensors')
+    .select('sensor, low_alarm, high_alarm')
+    .eq('device_id', device.id);
+
+  if (error) {
+    console.error('Błąd ładowania sensorów:', error);
+    return;
+  }
+
+  const content = `
+  <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+    <img src="${device.image_url}" alt="${device.device_name}" style="max-width: 200px; border: 2px solid black; border-radius: 10px;">
+    <div style="flex: 1; min-width: 300px;">
+      <table>
+        <thead><tr><th>Czujnik</th><th>Low Alarm</th><th>High Alarm</th></tr></thead>
+        <tbody>
+          ${sensors.map(row => `
+            <tr>
+              <td>${row.sensor}</td>
+              <td>${row.low_alarm}</td>
+              <td>${row.high_alarm}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+
+
+  deviceSectionContainer.innerHTML = `
+  <div class="container">
+    <h2>${device.device_name}</h2>
+    ${content}
+  </div>`;
+
+}
+
+loadDevices();
+
+
+
+
+</script>
+
 </body>
 </html>
+
 
 
